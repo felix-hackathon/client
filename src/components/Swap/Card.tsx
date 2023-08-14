@@ -1,9 +1,19 @@
-import { styled } from 'styled-components'
-import SwapInput from './Input'
-import arrowDown from '@/assets/icons/arrow-down.svg'
+import { css, styled } from 'styled-components'
+import { TokenInput } from './Input'
 import Image from 'next/image'
+import { useCallback, useEffect } from 'react'
+import * as yup from 'yup'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import Form from '../UI/Form'
+import useDebounce from '@/hooks/core/useDebounnce'
+import dynamic from 'next/dynamic'
+const SwapFormField = dynamic(() => import('./Input'))
+import arrowDown from '@/assets/icons/arrow-down.svg'
+import useQuote from '@/hooks/swap/useQuote'
+import { convertBalanceToWei, convertWeiToBalance, roundingNumber } from '@/common/functions/math'
 
-const Container = styled.div`
+const Container = styled(Form)`
   z-index: 1;
   width: 100%;
   max-width: 700px;
@@ -22,7 +32,7 @@ const SwapInputContainer = styled.div`
   justify-content: space-between;
 `
 
-const SwapButton = styled.div`
+const SwapButton = styled.button`
   width: 150px;
   padding: 10px;
   background-color: #444;
@@ -31,11 +41,31 @@ const SwapButton = styled.div`
   align-items: flex-end;
   font-size: 24px;
   color: #fff;
+  border: none;
   cursor: pointer;
   user-select: none;
   &:active {
     background-color: #666;
   }
+  position: relative;
+  ${(props) =>
+    props.disabled &&
+    css`
+      cursor: not-allowed;
+      &:active {
+        background-color: #444;
+      }
+    `}
+`
+
+const Error = styled.div`
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 10px;
+  color: red;
+  font-size: 14px;
+  text-align: right;
 `
 
 const SwapIcon = styled.div`
@@ -47,24 +77,92 @@ const SwapIcon = styled.div`
   aspect-ratio: 1;
   border-radius: 50%;
   background-color: #444;
-  transition: 1s ease;
+  transition: 0.2s ease;
   cursor: pointer;
   &:hover {
     transform: rotate(180deg);
   }
 `
 
+const schema = yup.object({
+  from: yup.object({
+    token: yup.string().required('Token is required'),
+    amount: yup.string().required('Amount is required'),
+    chainId: yup.number().required(),
+    decimals: yup.number().required(),
+  }),
+  to: yup.object({
+    token: yup.string().required('Token is required'),
+    amount: yup.string().required('Amount is required'),
+    chainId: yup.number().required(),
+    decimals: yup.number().required(),
+  }),
+})
+
 const SwapCard = ({ chainId }: { chainId: number }) => {
+  const form = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      from: {
+        amount: '',
+        token: '',
+        chainId: chainId,
+      },
+      to: {
+        amount: '',
+        token: '',
+        chainId: chainId,
+      },
+    },
+  })
+
+  const watchFrom = form.watch('from')
+  const from = useDebounce<TokenInput>(watchFrom, 600)
+  const watchTo = form.watch('to')
+  const to = useDebounce<TokenInput>(watchTo, 600)
+
+  const { loadingQuote, quoteData, error } = useQuote(chainId, {
+    src: from.token,
+    dst: to.token,
+    amount: from.amount,
+  })
+
+  useEffect(() => {
+    if (to.token && to.token !== from.token) {
+      if (from.amount !== '') {
+        if (quoteData && from.amount !== '') {
+          form.setValue('to.amount', quoteData.toAmount)
+        }
+      } else {
+        form.setValue('to.amount', '')
+      }
+    } else {
+      form.setValue('to.amount', from.amount)
+    }
+  }, [form, from, to.token, quoteData])
+
+  const handleSwitch = useCallback(() => {
+    form.setValue('to', from)
+    form.setValue('from', to)
+  }, [form, from, to])
+
   return (
-    <Container>
+    <Container
+      form={form}
+      onSubmit={(v) => {
+        console.log(v)
+      }}
+    >
       <SwapInputContainer>
-        <SwapInput chainId={chainId} title='From' />
-        <SwapIcon>
+        <SwapFormField chainId={chainId} title='From' name='from' />
+        <SwapIcon onClick={handleSwitch}>
           <Image src={arrowDown} alt='icon-swap' />
         </SwapIcon>
-        <SwapInput chainId={chainId} disabled title='To' />
+        <SwapFormField loading={loadingQuote} readOnly chainId={chainId} name='to' title='To' />
       </SwapInputContainer>
-      <SwapButton>Swap</SwapButton>
+      <SwapButton disabled={!!error?.message} type='submit'>
+        {error?.message && <Error>{error?.message}</Error>} Swap
+      </SwapButton>
     </Container>
   )
 }

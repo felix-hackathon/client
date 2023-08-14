@@ -1,10 +1,20 @@
-import { Metadata } from 'next'
-import SwapClient from './page.client'
+'use client'
+import SwapSection from '@/components/Swap/Section'
+import { styled } from 'styled-components'
 
-export const metadata: Metadata = {
-  title: 'Swap Token',
-}
+const Container = styled.section`
+  width: 100%;
+  min-height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
 
-export default async function Swap({ params: { chainId } }: { params: { chainId: string } }) {
-  return <SwapClient chainId={parseInt(chainId)} />
+export default function SwapClient({ params: { chainId } }: { params: { chainId: string } }) {
+  return (
+    <Container>
+      <SwapSection chainId={parseInt(chainId)} />
+    </Container>
+  )
 }

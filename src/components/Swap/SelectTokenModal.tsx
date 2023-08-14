@@ -6,6 +6,11 @@ import useProtocols from '@/hooks/swap/useProtocols'
 import useSpender from '@/hooks/swap/useSpender'
 import useTokens from '@/hooks/swap/useTokens'
 import emptyToken from '@/assets/icons/tokens/empty-token.webp'
+import Loading from '../UI/Loading'
+import { useCallback, useState } from 'react'
+import useBalances from '@/hooks/core/useBalances'
+import useAuth from '@/hooks/core/useAuth'
+import { convertWeiToBalance } from '@/common/functions/math'
 const Container = styled.div`
   width: 440px;
   padding: 10px;
@@ -78,9 +83,30 @@ const TokenBalance = styled.div`
   color: #828282;
 `
 
-const SelectTokenModal = ({ chainId, value }: { chainId: number; value?: string }) => {
+const SelectTokenModal = ({ chainId, value, onChange }: { chainId: number; value?: string; onChange?: (value: string) => void }) => {
   const { closeModal } = useModal()
-  const { tokens } = useTokens(chainId)
+  const { account } = useAuth()
+  const { tokens, loadingTokens } = useTokens(chainId)
+  const { balances } = useBalances({
+    chainId,
+    userAddress: account || '',
+    tokenAddresses: tokens.map((i: any) => i.address),
+  })
+
+  console.log(balances, 'balances')
+  const [data, setData] = useState(value)
+
+  const handleChange = useCallback(
+    (v: string) => {
+      setData(v)
+      if (onChange) {
+        onChange(v)
+      }
+      closeModal()
+    },
+    [onChange, closeModal]
+  )
+
   return (
     <Container>
       <Header>
@@ -88,21 +114,25 @@ const SelectTokenModal = ({ chainId, value }: { chainId: number; value?: string 
         <CloseButton onClick={() => closeModal()} src={closeIcon} alt='close' />
       </Header>
       <ListContainer>
-        {tokens?.map((token: any) => (
-          <TokenContainer key={`${token?.address}-${token?.chainId}`} $active={value === token?.address}>
-            <Token>
-              {token?.icon ? (
-                <Image src={token?.icon} alt='token' width={30} height={30} />
-              ) : (
-                <Image src={emptyToken} alt='empty-token' width={30} height={30} />
-              )}
-              <TokenNameContainer>
-                <TokenName>{token?.name}</TokenName>
-                <TokenBalance>Balance: 0</TokenBalance>
-              </TokenNameContainer>
-            </Token>
-          </TokenContainer>
-        ))}
+        {loadingTokens ? (
+          <Loading wrapper={{ height: '100%' }} size='50px' />
+        ) : (
+          tokens?.map((token: any) => (
+            <TokenContainer key={`${token?.address}-${token?.chainId}`} $active={data === token?.address} onClick={() => handleChange(token?.address)}>
+              <Token>
+                {token?.icon ? (
+                  <Image src={token?.icon} alt='token' width={30} height={30} />
+                ) : (
+                  <Image src={emptyToken} alt='empty-token' width={30} height={30} />
+                )}
+                <TokenNameContainer>
+                  <TokenName>{token?.name}</TokenName>
+                  {balances?.[token?.address] && <TokenBalance>Balance: {convertWeiToBalance(balances[token?.address], token?.decimals)}</TokenBalance>}
+                </TokenNameContainer>
+              </Token>
+            </TokenContainer>
+          ))
+        )}
       </ListContainer>
     </Container>
   )

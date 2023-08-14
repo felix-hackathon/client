@@ -23,6 +23,7 @@
     "@web3modal/ethereum": "^2.7.1",
     "@web3modal/react": "^2.7.1",
     "aos": "^2.3.4",
+    "bignumber.js": "^9.1.1",
     "cookies-next": "^2.1.2",
     "crypto": "^1.0.1",
     "crypto-js": "^4.1.1",

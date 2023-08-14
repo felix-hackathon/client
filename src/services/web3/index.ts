@@ -3,6 +3,7 @@ import ConfigService from '../config'
 import { erc20ABI } from 'wagmi'
 import { ContractFunctionConfig, MulticallContracts, Narrow, multicall3Abi } from 'viem'
 import { multicall } from '@wagmi/core'
+import { NativeTokens } from '@/common/constants/web3'
 
 multicall
 export type MulticallOptions<TContracts extends ContractFunctionConfig[] = ContractFunctionConfig[]> = {
@@ -154,6 +155,66 @@ export default class Web3Service {
       })
     }
     return results
-    console.log(results)
+  }
+
+  static async getBalance({ chainId, tokenAddress, userAddress }: { userAddress: string; tokenAddress: string; chainId: number }) {
+    if (NativeTokens.includes(tokenAddress)) {
+      const provider = await this.getProvider(chainId)
+      return provider.getBalance(userAddress)
+    } else {
+      const contractToken = await this.createERC20Contract(chainId, tokenAddress)
+      return contractToken.balanceOf(userAddress)
+    }
+  }
+
+  static async getBalances({ chainId, tokenAddresses, userAddress }: { userAddress: string; tokenAddresses: string[]; chainId: number }) {
+    const contracts = []
+    for (let i = 0; i < tokenAddresses.length; i++) {
+      const tokenAddress = tokenAddresses[i].toLowerCase()
+      if (NativeTokens.includes(tokenAddress)) {
+        contracts.push({
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: 'address',
+                  name: 'addr',
+                  type: 'address',
+                },
+              ],
+              name: 'getEthBalance',
+              outputs: [
+                {
+                  internalType: 'uint256',
+                  name: 'balance',
+                  type: 'uint256',
+                },
+              ],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ],
+          address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+          functionName: 'getEthBalance',
+          args: [userAddress],
+        })
+      } else {
+        contracts.push({
+          abi: erc20ABI,
+          address: tokenAddress,
+          functionName: 'balanceOf',
+          args: [userAddress],
+        })
+      }
+    }
+    const data = await this.multicall({
+      chainId,
+      contracts: contracts as any,
+    })
+    const result: Record<string, string> = {}
+    for (let i = 0; i < tokenAddresses.length; i++) {
+      result[tokenAddresses[i]] = `${data?.[i]?.[0] || '0'}`
+    }
+    return result
   }
 }

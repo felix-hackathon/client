@@ -1,4 +1,5 @@
 import { fetcher } from '@/services/api'
+import { ethers } from 'ethers'
 import useSWR from 'swr'
 
 export type QuotePayload = {
@@ -19,18 +20,31 @@ export type QuotePayload = {
 }
 
 const useQuote = (chainId: number, query: QuotePayload) => {
-  const { data, isLoading } = useSWR(`/${chainId}/swap/quote`, async (url) => {
-    const res = await fetcher({
-      url,
-      query,
-      throwError: false,
-    })
-    return res?.data || null
-  })
+  const { data, isLoading, isValidating, error } = useSWR(
+    () => {
+      if (chainId && query.amount && ethers.isAddress(query.dst) && ethers.isAddress(query.src) && query.dst !== query.src) {
+        return [`/${chainId}/swap/quote`, query]
+      }
+      return null
+    },
+    async (queryKey) => {
+      const url = queryKey[0]
+      const query = queryKey[1]
+      const res = await fetcher({
+        url,
+        query,
+      })
+      return res?.data || null
+    },
+    {
+      shouldRetryOnError: false,
+    }
+  )
 
   return {
-    data,
-    isLoading,
+    quoteData: data,
+    error,
+    loadingQuote: isLoading || isValidating,
   }
 }
 
