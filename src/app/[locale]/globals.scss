@@ -1,0 +1,75 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+  &:hover,
+  &:click,
+  &:visited {
+    border: none;
+    outline: none;
+    text-decoration: none;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+img {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@for $pixel from 0 through 200 {
+  // ** PADDING HEPLER **
+  .PT#{$pixel} {
+    padding-top: #{$pixel}px !important;
+  }
+
+  .PB#{$pixel} {
+    padding-bottom: #{$pixel}px !important;
+  }
+
+  .PL#{$pixel} {
+    padding-left: #{$pixel}px !important;
+  }
+
+  .PR#{$pixel} {
+    padding-right: #{$pixel}px !important;
+  }
+
+  // ** /END PADDING HELPER **
+
+  // ** MARGIN HELPER **
+  .MT#{$pixel} {
+    margin-top: #{$pixel}px !important;
+  }
+
+  .MB#{$pixel} {
+    margin-bottom: #{$pixel}px !important;
+  }
+
+  .ML#{$pixel} {
+    margin-left: #{$pixel}px !important;
+  }
+
+  .MR#{$pixel} {
+    margin-right: #{$pixel}px !important;
+  }
+
+  // ** /END MARGIN HELPER **
+}
