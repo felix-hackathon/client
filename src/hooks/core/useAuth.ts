@@ -157,6 +157,7 @@ const useAuth = () => {
 
   return {
     isConnected,
+    connector,
     isSigned,
     isSigning,
     handleSign,

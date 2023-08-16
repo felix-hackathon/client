@@ -8,10 +8,12 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import Form from '../UI/Form'
 import useDebounce from '@/hooks/core/useDebounnce'
 import dynamic from 'next/dynamic'
-const SwapFormField = dynamic(() => import('./Input'))
 import arrowDown from '@/assets/icons/arrow-down.svg'
 import useQuote from '@/hooks/swap/useQuote'
-import { convertBalanceToWei, convertWeiToBalance, roundingNumber } from '@/common/functions/math'
+import useSwap from '@/hooks/swap/useSwap'
+import useAuth from '@/hooks/core/useAuth'
+import { CHAINS } from '@/common/constants/chains'
+const SwapFormField = dynamic(() => import('./Input'))
 
 const Container = styled(Form)`
   z-index: 1;
@@ -100,6 +102,7 @@ const schema = yup.object({
 })
 
 const SwapCard = ({ chainId }: { chainId: number }) => {
+  const { account } = useAuth()
   const form = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -127,6 +130,8 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
     amount: from.amount,
   })
 
+  const { trigger, swapError, swapData, loadingSwap } = useSwap(chainId)
+  console.log('swapData', swapData)
   useEffect(() => {
     if (to.token && to.token !== from.token) {
       if (from.amount !== '') {
@@ -150,18 +155,20 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
     <Container
       form={form}
       onSubmit={(v) => {
-        console.log(v)
+        trigger({ ...v, userAddress: account })
       }}
     >
       <SwapInputContainer>
-        <SwapFormField chainId={chainId} title='From' name='from' />
+        <SwapFormField chainId={chainId} title={`From ${CHAINS?.find((i) => i.id === chainId)?.name}`} name='from' />
         <SwapIcon onClick={handleSwitch}>
           <Image src={arrowDown} alt='icon-swap' />
         </SwapIcon>
-        <SwapFormField loading={loadingQuote} readOnly chainId={chainId} name='to' title='To' />
+        <SwapFormField loading={loadingQuote} readOnly chainId={chainId} name='to' title={`To ${CHAINS?.find((i) => i.id === chainId)?.name}`} />
       </SwapInputContainer>
-      <SwapButton disabled={!!error?.message} type='submit'>
-        {error?.message && <Error>{error?.message}</Error>} Swap
+      <SwapButton disabled={!!error?.message || loadingSwap} type='submit'>
+        {error?.message && <Error>{error?.message}</Error>}
+        {swapError?.message && <Error>{swapError?.message}</Error>}
+        {loadingSwap ? 'Swap Loading...' : 'Swap'}
       </SwapButton>
     </Container>
   )

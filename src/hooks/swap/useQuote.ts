@@ -22,7 +22,7 @@ export type QuotePayload = {
 const useQuote = (chainId: number, query: QuotePayload) => {
   const { data, isLoading, isValidating, error } = useSWR(
     () => {
-      if (chainId && query.amount && ethers.isAddress(query.dst) && ethers.isAddress(query.src) && query.dst !== query.src) {
+      if (chainId && query.amount && query.amount !== '0' && ethers.isAddress(query.dst) && ethers.isAddress(query.src) && query.dst !== query.src) {
         return [`/${chainId}/swap/quote`, query]
       }
       return null
