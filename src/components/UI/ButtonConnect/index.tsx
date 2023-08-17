@@ -10,24 +10,22 @@ const Container = styled(PrimaryButton)`
 `
 const ButtonConnect = () => {
   const { userAddress, isConnected, isSigned } = useAuth()
-  const [isSigning, setIsSigning] = useState(false)
-
-  const handleSign = useCallback(async () => {
-    setIsSigning(true)
-    await KaikasService.signIn()
-    setIsSigning(false)
-  }, [])
+  const [loading, setLoading] = useState(false)
 
   const handleClick = useCallback(async () => {
-    if (!isConnected || isSigned) {
+    setLoading(true)
+    if (!isConnected) {
       await KaikasService.initialize()
+    } else if (isSigned) {
+      await KaikasService.disconnect()
     } else {
-      handleSign()
+      await KaikasService.signIn()
     }
-  }, [isConnected, isSigned, handleSign])
+    setLoading(false)
+  }, [isConnected, isSigned])
 
   return (
-    <Container height='40px' loading={isSigning} onClick={handleClick}>
+    <Container height='40px' loading={loading} onClick={handleClick}>
       {isConnected && userAddress ? isSigned ? ellipsisAddress(userAddress) : 'Sign' : <>Wallet Connect</>}
     </Container>
   )
