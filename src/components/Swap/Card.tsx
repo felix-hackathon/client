@@ -8,8 +8,6 @@ import useDebounce from '@/hooks/core/useDebounnce'
 import dynamic from 'next/dynamic'
 import arrowDown from '@/assets/icons/arrow-down.svg'
 import useQuote from '@/hooks/swap/useQuote'
-// import useSwap from '@/hooks/swap/useSwap'
-import useAuth from '@/hooks/core/useAuth'
 import { CHAINS } from '@/common/constants/chains'
 const Form = dynamic(() => import('../UI/Form'))
 const SwapFormField = dynamic(() => import('./Input'))
@@ -101,7 +99,6 @@ const schema = yup.object({
 })
 
 const SwapCard = ({ chainId }: { chainId: number }) => {
-  const { account } = useAuth()
   const form = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
