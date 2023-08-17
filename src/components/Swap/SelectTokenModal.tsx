@@ -83,11 +83,11 @@ const TokenBalance = styled.div`
 
 const SelectTokenModal = ({ chainId, value, onChange }: { chainId: number; value?: string; onChange?: (value: string) => void }) => {
   const { closeModal } = useModal()
-  const { account } = useAuth()
+  const { userAddress } = useAuth()
   const { tokens, loadingTokens } = useTokens(chainId)
   const { balances } = useBalances({
     chainId,
-    userAddress: account || '',
+    userAddress: userAddress || '',
     tokenAddresses: tokens.map((i: any) => i.address),
   })
 

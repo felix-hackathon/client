@@ -85,14 +85,14 @@ const SwapInput = React.forwardRef(
     },
     ref: any
   ) => {
-    const { account } = useAuth()
+    const { userAddress } = useAuth()
     const [address, setAddress] = useState(value?.token || '')
     const { token } = useToken(address, chainId)
     const [amount, setAmount] = useState(value?.amount || '')
     const { balance } = useBalance({
       chainId,
       tokenAddress: address,
-      userAddress: account || '',
+      userAddress: userAddress || '',
     })
 
     useEffect(() => {

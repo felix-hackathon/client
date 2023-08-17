@@ -151,7 +151,7 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
     <Container
       form={form}
       onSubmit={(v) => {
-        // trigger({ ...v, userAddress: account })
+        console.log(v)
       }}
     >
       <SwapInputContainer>
