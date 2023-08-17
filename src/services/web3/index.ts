@@ -215,4 +215,21 @@ export default class Web3Service {
     }
     return result
   }
+
+  static async estimateGas({ chainId, from, to, data, value }: { from: string; to: string; data?: string; value?: string; chainId: number }) {
+    const provider = await this.getProvider(chainId)
+    const res = await provider.estimateGas({
+      from,
+      to,
+      value,
+      data,
+    })
+    return res
+  }
+
+  static async getFeeData(chainId: number) {
+    const provider = await this.getProvider(chainId)
+    const feeData = await provider.getFeeData()
+    return feeData
+  }
 }

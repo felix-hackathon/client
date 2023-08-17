@@ -4,6 +4,7 @@ import Aos from 'aos'
 import { useEffect } from 'react'
 import Header from './header'
 import useKaikasReconnect from '@/hooks/kaikas/useKaikasReconnect'
+import useWatchNetwork from '@/hooks/kaikas/useWatchNetwork'
 
 const Container = styled.div`
   width: 100vw;
@@ -20,6 +21,7 @@ const Container = styled.div`
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   useKaikasReconnect()
+  useWatchNetwork()
   useEffect(() => {
     if (process.env.NODE_ENV === 'production') {
       require('aos/dist/aos.css')

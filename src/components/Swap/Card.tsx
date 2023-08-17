@@ -9,6 +9,8 @@ import dynamic from 'next/dynamic'
 import arrowDown from '@/assets/icons/arrow-down.svg'
 import useQuote from '@/hooks/swap/useQuote'
 import { CHAINS } from '@/common/constants/chains'
+import useSwap from '@/hooks/swap/useSwap'
+import useAuth from '@/hooks/core/useAuth'
 const Form = dynamic(() => import('../UI/Form'))
 const SwapFormField = dynamic(() => import('./Input'))
 
@@ -125,9 +127,10 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
     dst: to.token,
     amount: from.amount,
   })
+  const { userAddress } = useAuth()
 
-  // const { trigger, swapError, swapData, loadingSwap } = useSwap(chainId)
-  // console.log('swapData', swapData)
+  const { trigger, swapError, swapData, loadingSwap } = useSwap(chainId)
+  console.log('swapData', swapData)
   useEffect(() => {
     if (to.token && to.token !== from.token) {
       if (from.amount !== '') {
@@ -152,6 +155,10 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
       form={form}
       onSubmit={(v) => {
         console.log(v)
+        trigger({
+          ...v,
+          userAddress,
+        })
       }}
     >
       <SwapInputContainer>
@@ -165,6 +172,7 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
         {error?.message && <Error>{error?.message}</Error>}
         {/* {swapError?.message && <Error>{swapError?.message}</Error>}
         {loadingSwap ? 'Swap Loading...' : 'Swap'} */}
+        Swap
       </SwapButton>
     </Container>
   )

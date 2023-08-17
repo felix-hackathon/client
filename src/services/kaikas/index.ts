@@ -4,6 +4,7 @@ import ReduxService from '../redux/service'
 import { setKaikas } from '../redux/slices/kaikas'
 import { setUser } from '../redux/slices/user'
 import LocalStorageService from '../storage'
+import Web3Service from '../web3'
 
 export const isKaikas = typeof window !== 'undefined' && window.klaytn && window.klaytn.isKaikas
 export default class KaikasService {
@@ -78,6 +79,18 @@ export default class KaikasService {
     window.klaytn.removeAllListeners()
   }
 
+  static async switchChain(chainId: number) {
+    try {
+      window.klaytn.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${Number(chainId).toString(16)}` }],
+      })
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
   static async refreshToken() {
     const address = window.klaytn.selectedAddress
     const refreshToken = await CookieService.get(`${CookieKeys.RefreshToken}::${address?.toLowerCase()}`)
@@ -139,7 +152,7 @@ export default class KaikasService {
       })
 
       if (resSignData) {
-        const signature = await window.caver.klay.sign(resSignData?.data?.message, account).catch(() => null)
+        const signature = await this.signMessage(resSignData?.data?.message, account)
         if (signature) {
           const resSign = await fetcher({
             url: '/authentication/sign',
@@ -177,5 +190,86 @@ export default class KaikasService {
       console.error(error)
       return false
     }
+  }
+
+  static async signMessage(message: string, account: string) {
+    const res = await await window.caver.klay.sign(message, account).catch(() => null)
+    return res
+  }
+
+  static async sendTransaction({
+    to,
+    data,
+    from,
+    gas,
+    gasPrice,
+    nonce,
+    value,
+    chainId,
+    callbackAfterDone,
+    callbackBeforeDone,
+    callbackError,
+  }: {
+    from?: string
+    to: string
+    value?: string
+    gas?: number
+    chainId?: number
+    gasPrice?: number
+    data?: string
+    nonce?: number
+    callbackError?: (error?: any) => any
+    callbackBeforeDone?: (hash?: string) => any
+    callbackAfterDone?: (receipt?: any) => any
+  }) {
+    if (!from) {
+      from = window.klaytn.selectedAddress as string
+    }
+    if (!gasPrice) {
+      const feeData = await Web3Service.getFeeData(chainId || parseInt(`${window.klaytn.networkVersion}`))
+      if (feeData?.gasPrice) {
+        gasPrice = parseInt(`${feeData?.gasPrice}`)
+      } else {
+        gasPrice = 50000000000
+      }
+    }
+    if (!gas) {
+      const gasLimit = await Web3Service.estimateGas({
+        from,
+        chainId: chainId || parseInt(`${window.klaytn.networkVersion}`),
+        to,
+        value: '1000000000000000000',
+      })
+      if (gasLimit) {
+        gas = parseInt(gasLimit.toString())
+      } else {
+        gas = 21_000
+      }
+    }
+    return new Promise((resolve, reject) => {
+      window.caver.klay
+        .sendTransaction({
+          from: from || window.klaytn.selectedAddress,
+          to,
+          value,
+          data,
+          gas,
+          gasPrice,
+          nonce,
+        })
+        .on('transactionHash', (hash: string) => {
+          console.log('Tx hash: ', hash)
+          callbackBeforeDone && callbackBeforeDone(hash)
+        })
+        .on('receipt', (receipt: any) => {
+          console.log('Tx Receipt: ', receipt)
+          callbackAfterDone && callbackAfterDone(receipt)
+          resolve(receipt)
+        })
+        .on('error', (error: any) => {
+          console.error('Tx Error: ', error)
+          callbackError ? callbackError(error) : reject(error)
+        })
+    })
   }
 }

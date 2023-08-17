@@ -1,4 +1,5 @@
 import { fetcher } from '@/services/api'
+import KaikasService from '@/services/kaikas'
 // import { sendTransaction } from '@wagmi/core'
 import useSWRMutation from 'swr/mutation'
 
@@ -31,15 +32,15 @@ const useSwap = (chainId: number) => {
       },
     })
     if (res?.data) {
-      // await sendTransaction({
-      //   to: res.data.tx.to,
-      //   data: res.data.tx.data,
-      //   account: res.data.tx.from,
-      //   gas: res.data.tx.gas,
-      //   gasPrice: res.data.tx.gasPrice,
-      //   chainId,
-      //   value: res.data.tx.value,
-      // }).catch(() => null)
+      await KaikasService.sendTransaction({
+        to: res.data.tx.to,
+        data: res.data.tx.data,
+        from: res.data.tx.from,
+        gas: res.data.tx.gas,
+        gasPrice: res.data.tx.gasPrice,
+        chainId,
+        value: res.data.tx.value,
+      }).catch(() => null)
     }
     return null
   })
