@@ -11,10 +11,10 @@ const Container = styled.section`
   align-items: center;
 `
 
-export default function SwapClient({ params: { chainId } }: { params: { chainId: string } }) {
+export default function SwapClient({ chainId }: { chainId: number }) {
   return (
     <Container>
-      <SwapSection chainId={parseInt(chainId)} />
+      <SwapSection chainId={chainId} />
     </Container>
   )
 }

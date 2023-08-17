@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { styled } from 'styled-components'
 import backIcon from '@/assets/icons/back.svg'
-import useRouter from '@/hooks/core/useRouter'
+import { useRouter } from 'next/navigation'
 
 const Container = styled.div`
   position: fixed;

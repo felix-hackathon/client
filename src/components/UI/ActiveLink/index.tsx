@@ -1,5 +1,5 @@
-import useRouter from '@/hooks/core/useRouter'
 import Link, { LinkProps } from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { css, styled } from 'styled-components'
 
@@ -17,13 +17,13 @@ export type ActiveLinkProps = LinkProps & {
 }
 
 const ActiveLink = ({ href, children, ...rest }: ActiveLinkProps) => {
-  const router = useRouter()
+  const pathname = usePathname()
   const active = useMemo(() => {
-    return router.pathname === href
-  }, [router, href])
+    return pathname === href
+  }, [pathname, href])
 
   return (
-    <CustomLink $active={active} href={`/${router.locale}${href}`} {...rest}>
+    <CustomLink $active={active} href={href} {...rest}>
       {children}
     </CustomLink>
   )

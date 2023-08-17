@@ -1,18 +1,17 @@
 import { css, styled } from 'styled-components'
-import { TokenInput } from './Input'
 import Image from 'next/image'
 import { useCallback, useEffect } from 'react'
 import * as yup from 'yup'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import Form from '../UI/Form'
 import useDebounce from '@/hooks/core/useDebounnce'
 import dynamic from 'next/dynamic'
 import arrowDown from '@/assets/icons/arrow-down.svg'
 import useQuote from '@/hooks/swap/useQuote'
-import useSwap from '@/hooks/swap/useSwap'
+// import useSwap from '@/hooks/swap/useSwap'
 import useAuth from '@/hooks/core/useAuth'
 import { CHAINS } from '@/common/constants/chains'
+const Form = dynamic(() => import('../UI/Form'))
 const SwapFormField = dynamic(() => import('./Input'))
 
 const Container = styled(Form)`
@@ -120,9 +119,9 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
   })
 
   const watchFrom = form.watch('from')
-  const from = useDebounce<TokenInput>(watchFrom, 600)
+  const from = useDebounce<any>(watchFrom, 600)
   const watchTo = form.watch('to')
-  const to = useDebounce<TokenInput>(watchTo, 600)
+  const to = useDebounce<any>(watchTo, 600)
 
   const { loadingQuote, quoteData, error } = useQuote(chainId, {
     src: from.token,
@@ -130,8 +129,8 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
     amount: from.amount,
   })
 
-  const { trigger, swapError, swapData, loadingSwap } = useSwap(chainId)
-  console.log('swapData', swapData)
+  // const { trigger, swapError, swapData, loadingSwap } = useSwap(chainId)
+  // console.log('swapData', swapData)
   useEffect(() => {
     if (to.token && to.token !== from.token) {
       if (from.amount !== '') {
@@ -155,7 +154,7 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
     <Container
       form={form}
       onSubmit={(v) => {
-        trigger({ ...v, userAddress: account })
+        // trigger({ ...v, userAddress: account })
       }}
     >
       <SwapInputContainer>
@@ -165,10 +164,10 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
         </SwapIcon>
         <SwapFormField loading={loadingQuote} readOnly chainId={chainId} name='to' title={`To ${CHAINS?.find((i) => i.id === chainId)?.name}`} />
       </SwapInputContainer>
-      <SwapButton disabled={!!error?.message || loadingSwap} type='submit'>
+      <SwapButton disabled={!!error?.message} type='submit'>
         {error?.message && <Error>{error?.message}</Error>}
-        {swapError?.message && <Error>{swapError?.message}</Error>}
-        {loadingSwap ? 'Swap Loading...' : 'Swap'}
+        {/* {swapError?.message && <Error>{swapError?.message}</Error>}
+        {loadingSwap ? 'Swap Loading...' : 'Swap'} */}
       </SwapButton>
     </Container>
   )

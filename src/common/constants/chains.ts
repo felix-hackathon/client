@@ -1,5 +1,3 @@
-import { avalanche, avalancheFuji, goerli, mainnet, polygon, polygonMumbai } from '@wagmi/chains'
-
 export const klaytnTestnet = {
   id: 1001,
   name: 'Klaytn Testnet',
@@ -51,8 +49,4 @@ export const klaytn = {
   },
 }
 
-export const CHAINS = [mainnet, goerli, polygon, polygonMumbai, avalanche, avalancheFuji, klaytnTestnet, klaytn]
-
-export const chainsSupported = CHAINS.filter((chain) =>
-  ((process.env.NEXT_PUBLIC_CHAINS_SUPPORTED || [process.env.NEXT_PUBLIC_DEFAULT_CHAIN]) as unknown as number[])?.includes(chain.id)
-)
+export const CHAINS = [klaytnTestnet, klaytn]

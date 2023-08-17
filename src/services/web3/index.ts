@@ -1,11 +1,9 @@
 import { Contract, Interface, Network, ethers } from 'ethers'
 import ConfigService from '../config'
-import { erc20ABI } from 'wagmi'
+import erc20ABI from './erc20ABI'
 import { ContractFunctionConfig, MulticallContracts, Narrow, multicall3Abi } from 'viem'
-import { multicall } from '@wagmi/core'
 import { NativeTokens } from '@/common/constants/web3'
 
-multicall
 export type MulticallOptions<TContracts extends ContractFunctionConfig[] = ContractFunctionConfig[]> = {
   chainId: number
   contracts: Narrow<readonly [...MulticallContracts<TContracts>]>

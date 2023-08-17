@@ -1,5 +1,5 @@
 import { fetcher } from '@/services/api'
-import { sendTransaction } from '@wagmi/core'
+// import { sendTransaction } from '@wagmi/core'
 import useSWRMutation from 'swr/mutation'
 
 type ISwap = {
@@ -31,15 +31,15 @@ const useSwap = (chainId: number) => {
       },
     })
     if (res?.data) {
-      await sendTransaction({
-        to: res.data.tx.to,
-        data: res.data.tx.data,
-        account: res.data.tx.from,
-        gas: res.data.tx.gas,
-        gasPrice: res.data.tx.gasPrice,
-        chainId,
-        value: res.data.tx.value,
-      }).catch(() => null)
+      // await sendTransaction({
+      //   to: res.data.tx.to,
+      //   data: res.data.tx.data,
+      //   account: res.data.tx.from,
+      //   gas: res.data.tx.gas,
+      //   gasPrice: res.data.tx.gasPrice,
+      //   chainId,
+      //   value: res.data.tx.value,
+      // }).catch(() => null)
     }
     return null
   })

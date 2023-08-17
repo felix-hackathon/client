@@ -4,7 +4,6 @@ import Link from 'next/link'
 import ActiveLink from '@/components/UI/ActiveLink'
 import logo from '@/assets/logo/logo-transparent.png'
 import ButtonConnect from '@/components/UI/ButtonConnect'
-import useLanguage from '@/hooks/core/useLanguage'
 
 const Container = styled.header`
   width: 100%;
@@ -54,7 +53,6 @@ const LinkContainer = styled.div`
 `
 
 const Header = () => {
-  const language = useLanguage()
   return (
     <>
       <Container>
@@ -65,8 +63,8 @@ const Header = () => {
             </Link>
           </Side>
           <LinkContainer>
-            <ActiveLink href='/'>{language.home}</ActiveLink>
-            <ActiveLink href='/swap/8217'>{language.swap}</ActiveLink>
+            <ActiveLink href='/'>Home</ActiveLink>
+            <ActiveLink href='/swap'>Swap</ActiveLink>
           </LinkContainer>
           <Side $right>
             <ButtonConnect />

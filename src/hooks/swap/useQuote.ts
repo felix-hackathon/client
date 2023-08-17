@@ -1,5 +1,4 @@
-import { fetcher } from '@/services/api'
-import { ethers } from 'ethers'
+import { isAddress } from 'ethers'
 import useSWR from 'swr'
 
 export type QuotePayload = {
@@ -22,12 +21,13 @@ export type QuotePayload = {
 const useQuote = (chainId: number, query: QuotePayload) => {
   const { data, isLoading, isValidating, error } = useSWR(
     () => {
-      if (chainId && query.amount && query.amount !== '0' && ethers.isAddress(query.dst) && ethers.isAddress(query.src) && query.dst !== query.src) {
+      if (chainId && query.amount && query.amount !== '0' && isAddress(query.dst) && isAddress(query.src) && query.dst !== query.src) {
         return [`/${chainId}/swap/quote`, query]
       }
       return null
     },
     async (queryKey) => {
+      const { fetcher } = await import('@/services/api')
       const url = queryKey[0]
       const query = queryKey[1]
       const res = await fetcher({
