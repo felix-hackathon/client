@@ -3,6 +3,7 @@ import { styled } from 'styled-components'
 import Aos from 'aos'
 import { useEffect } from 'react'
 import Header from './header'
+import useKaikasReconnect from '@/hooks/kaikas/useKaikasReconnect'
 
 const Container = styled.div`
   width: 100vw;
@@ -18,6 +19,7 @@ const Container = styled.div`
 `
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
+  useKaikasReconnect()
   useEffect(() => {
     if (process.env.NODE_ENV === 'production') {
       require('aos/dist/aos.css')

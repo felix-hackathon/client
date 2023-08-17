@@ -1,28 +1,34 @@
-import Image from 'next/image'
 import { styled } from 'styled-components'
 import PrimaryButton from '../Button/Primary'
 import useAuth from '@/hooks/core/useAuth'
 import { ellipsisAddress } from '@/common/functions'
-import { useWeb3Modal } from '@web3modal/react'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
+import KaikasService from '@/services/kaikas'
 
 const Container = styled(PrimaryButton)`
   margin-top: -5px;
 `
 const ButtonConnect = () => {
-  const { open } = useWeb3Modal()
-  const { account, handleSign, isConnected, isSigned, isSigning } = useAuth()
-  const handleClick = useCallback(() => {
+  const { userAddress, isConnected, isSigned } = useAuth()
+  const [isSigning, setIsSigning] = useState(false)
+
+  const handleSign = useCallback(async () => {
+    setIsSigning(true)
+    await KaikasService.signIn()
+    setIsSigning(false)
+  }, [])
+
+  const handleClick = useCallback(async () => {
     if (!isConnected || isSigned) {
-      open()
+      await KaikasService.initialize()
     } else {
       handleSign()
     }
-  }, [isConnected, isSigned, open, handleSign])
+  }, [isConnected, isSigned, handleSign])
 
   return (
     <Container height='40px' loading={isSigning} onClick={handleClick}>
-      {isConnected && account ? isSigned ? ellipsisAddress(account) : 'Sign' : <>Wallet Connect</>}
+      {isConnected && userAddress ? isSigned ? ellipsisAddress(userAddress) : 'Sign' : <>Wallet Connect</>}
     </Container>
   )
 }

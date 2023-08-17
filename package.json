@@ -22,7 +22,6 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "@web3modal/ethereum": "^2.7.1",
-    "@web3modal/react": "^2.7.1",
     "aos": "^2.3.4",
     "bignumber.js": "^9.1.1",
     "cookies-next": "^2.1.2",
