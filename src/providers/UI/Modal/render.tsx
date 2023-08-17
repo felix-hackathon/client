@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import { ModalContext } from '.'
 import Modal from '@/components/UI/Modal'
+import { ModalContext } from '.'
 
 const ModalRenderer = () => {
   const configs = useContext(ModalContext)

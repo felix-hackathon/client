@@ -1,5 +1,5 @@
-import ModalProvider from './Modal'
-import ModalRenderer from './Modal/render'
+import ModalProvider from './modal'
+import ModalRenderer from './modal/render'
 
 const UserInterfaceProvider = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -1,5 +1,5 @@
 import useModal from '@/hooks/core/useModal'
-import { IModal } from '@/providers/UI/Modal'
+import { IModal } from '@/providers/ui/modal'
 import { styled } from 'styled-components'
 
 const Container = styled.div`

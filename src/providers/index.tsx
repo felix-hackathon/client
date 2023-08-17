@@ -1,7 +1,7 @@
 'use client'
-import ReduxProvider from './Redux'
-import StyledComponentsRegistry from './StyledComponentsRegistry'
-import UserInterfaceProvider from './UI'
+import ReduxProvider from './redux'
+import StyledComponentsRegistry from './styled-components-registry'
+import UserInterfaceProvider from './ui'
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
