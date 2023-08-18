@@ -1,6 +1,6 @@
 import { fetcher } from '@/services/api'
 import KaikasService from '@/services/kaikas'
-// import { sendTransaction } from '@wagmi/core'
+import { mutate } from 'swr'
 import useSWRMutation from 'swr/mutation'
 
 type ISwap = {
@@ -32,15 +32,26 @@ const useSwap = (chainId: number) => {
       },
     })
     if (res?.data) {
-      await KaikasService.sendTransaction({
+      const rawTx = await KaikasService.signTransaction({
+        type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
         to: res.data.tx.to,
         data: res.data.tx.data,
         from: res.data.tx.from,
         gas: res.data.tx.gas,
-        gasPrice: res.data.tx.gasPrice,
-        chainId,
         value: res.data.tx.value,
       }).catch(() => null)
+      if (rawTx) {
+        const resTx = await fetcher({
+          url,
+          method: 'POST',
+          body: {
+            rawTx,
+          },
+        })
+        mutate([`balance`, arg.userAddress, arg.to.token, chainId])
+        mutate([`token-swap-info`, arg.userAddress, arg.from.token, chainId, res?.data?.tx?.to])
+        return resTx
+      }
     }
     return null
   })

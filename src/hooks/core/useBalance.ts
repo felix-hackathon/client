@@ -21,6 +21,9 @@ const useBalance = ({ userAddress, tokenAddress, chainId }: { userAddress?: stri
       })
 
       return `${res}`
+    },
+    {
+      revalidateOnFocus: false,
     }
   )
 

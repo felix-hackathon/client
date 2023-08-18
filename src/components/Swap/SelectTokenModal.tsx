@@ -91,7 +91,6 @@ const SelectTokenModal = ({ chainId, value, onChange }: { chainId: number; value
     tokenAddresses: tokens.map((i: any) => i.address),
   })
 
-  console.log(balances, 'balances', tokens)
   const [data, setData] = useState(value)
 
   const handleChange = useCallback(

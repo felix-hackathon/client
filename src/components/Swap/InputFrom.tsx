@@ -5,8 +5,8 @@ import dynamic from 'next/dynamic'
 import useToken from '@/hooks/swap/useToken'
 import { convertBalanceToWei, convertWeiToBalance } from '@/common/functions/math'
 import Skeleton from '../UI/Skeleton'
-import useBalance from '@/hooks/core/useBalance'
 import useAuth from '@/hooks/core/useAuth'
+import useFromTokenInfo from '@/hooks/swap/useFromTokenInfo'
 const SelectToken = dynamic(() => import('./SelectToken'))
 
 const Container = styled.div`
@@ -62,13 +62,12 @@ const Input = styled.input`
   }
 `
 
-export type TokenInput = { token: string; amount: string; chainId: number; decimals: number }
+export type TokenFromInput = { token: string; amount: string; chainId: number; decimals: number; userBalance: string; allowance: string; hasPermit: boolean }
 
-const SwapInput = React.forwardRef(
+const SwapInputFrom = React.forwardRef(
   (
     {
       title,
-      readOnly,
       chainId,
       onChange,
       loading,
@@ -76,12 +75,11 @@ const SwapInput = React.forwardRef(
       value,
     }: {
       title: string
-      readOnly?: boolean
       loading?: boolean
       chainId: number
-      value?: TokenInput
+      value?: TokenFromInput
       error?: any
-      onChange?: (v: TokenInput) => void
+      onChange?: (v: TokenFromInput) => void
     },
     ref: any
   ) => {
@@ -89,7 +87,7 @@ const SwapInput = React.forwardRef(
     const [address, setAddress] = useState(value?.token || '')
     const { token } = useToken(address, chainId)
     const [amount, setAmount] = useState(value?.amount || '')
-    const { balance } = useBalance({
+    const { info } = useFromTokenInfo({
       chainId,
       tokenAddress: address,
       userAddress: userAddress || '',
@@ -102,9 +100,12 @@ const SwapInput = React.forwardRef(
           token: address,
           chainId,
           decimals: token?.decimals,
+          allowance: info?.allowance,
+          hasPermit: info?.hasPermit,
+          userBalance: info?.balance,
         })
       }
-    }, [address, token, chainId, amount, onChange])
+    }, [address, token, chainId, amount, onChange, info.allowance, info.balance, info.hasPermit])
 
     useEffect(() => {
       setAddress(value?.token || '')
@@ -138,15 +139,14 @@ const SwapInput = React.forwardRef(
               ref={ref}
               value={amount ? convertWeiToBalance(amount, token?.decimals) : ''}
               onChange={(e) => handleChangeAmount(e.target.value)}
-              disabled={readOnly}
               type='number'
             />
           )}
           <SelectToken isError={!!error?.token} chainId={chainId} value={address} onChange={handleChangeToken} />
         </InputContainer>
-        {balance ? (
+        {info ? (
           <Balance>
-            Balance: {convertWeiToBalance(balance, token?.decimals)} {!readOnly && <span onClick={() => setAmount(balance)}>Max</span>}
+            Balance: {convertWeiToBalance(info.balance, token?.decimals)} <span onClick={() => setAmount(info.balance)}>Max</span>
           </Balance>
         ) : (
           <Balance />
@@ -156,29 +156,18 @@ const SwapInput = React.forwardRef(
   }
 )
 
-const SwapFormField = ({
-  chainId,
-  title,
-  readOnly,
-  name,
-  loading,
-}: {
-  name: string
-  title: string
-  readOnly?: boolean
-  loading?: boolean
-  chainId: number
-}) => {
+const SwapFromFormField = ({ chainId, title, name, loading }: { name: string; title: string; loading?: boolean; chainId: number }) => {
   const {
     control,
     formState: { errors },
   } = useFormContext()
+
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field }) => <SwapInput {...field} error={errors?.[name]} title={title} chainId={chainId} loading={loading} readOnly={readOnly} />}
+      render={({ field }) => <SwapInputFrom {...field} error={errors?.[name]} title={title} chainId={chainId} loading={loading} />}
     />
   )
 }
-export default SwapFormField
+export default SwapFromFormField

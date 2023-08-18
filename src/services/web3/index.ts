@@ -1,8 +1,9 @@
 import { Contract, Interface, Network, ethers } from 'ethers'
 import ConfigService from '../config'
 import erc20ABI from './erc20ABI'
-import { ContractFunctionConfig, MulticallContracts, Narrow, multicall3Abi } from 'viem'
+import { ContractFunctionConfig, MulticallContracts, Narrow } from 'viem'
 import { NativeTokens } from '@/common/constants/web3'
+import multicallABI from './multicallABI'
 
 export type MulticallOptions<TContracts extends ContractFunctionConfig[] = ContractFunctionConfig[]> = {
   chainId: number
@@ -27,7 +28,7 @@ export default class Web3Service {
   static async createMulticallContract(chainId: number, address?: string) {
     const provider = await this.getProvider(chainId)
     const defaultMulticallAddress = '0xcA11bde05977b3631167028862bE2a173976CA11'
-    return new Contract(address || defaultMulticallAddress, multicall3Abi, provider)
+    return new Contract(address || defaultMulticallAddress, multicallABI, provider)
   }
   static async createERC20Contract(chainId: number, address: string) {
     const provider = await this.getProvider(chainId)
@@ -44,13 +45,12 @@ export default class Web3Service {
         const iface = Interface.from(currentContract.abi)
         return {
           target: currentContract.address,
-          allowFailure: true,
           callData: iface.encodeFunctionData(currentContract.functionName, currentContract.args || []),
         }
       })
-      const res = await contract.aggregate3.staticCall(callsData)
+      const res = await contract.tryAggregate.staticCall(false, callsData)
       const resultsDecoded = res.map(({ success, returnData }: any, i: number) => {
-        if (!success) return null
+        if (!success || returnData === '0x') return null
         const currentContract: any = contracts[i]
         const iface = Interface.from(currentContract.abi as any)
         return iface.decodeFunctionResult(currentContract.functionName, returnData)

@@ -272,4 +272,34 @@ export default class KaikasService {
         })
     })
   }
+
+  static async signTransaction({
+    type,
+    from,
+    gas,
+    to,
+    value,
+    data,
+  }: {
+    type?: string
+    from?: string
+    to?: string
+    gas?: string
+    value?: string
+    data?: string
+  }) {
+    try {
+      const res = await window.caver.klay.signTransaction({
+        type,
+        from,
+        gas,
+        to,
+        value,
+        data,
+      })
+      return res?.rawTransaction || null
+    } catch (error) {
+      return null
+    }
+  }
 }
