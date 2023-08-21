@@ -7,6 +7,8 @@ const Container = styled.div`
   position: fixed;
   top: 20px;
   left: 15px;
+  z-index: 1;
+  cursor: pointer;
 `
 
 export type BackButtonProps = {}

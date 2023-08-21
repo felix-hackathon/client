@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import { css, styled } from 'styled-components'
 import Link from 'next/link'
-import ActiveLink from '@/components/UI/ActiveLink'
 import logo from '@/assets/logo/logo-transparent.png'
 import ButtonConnect from '@/components/UI/ButtonConnect'
+import ActiveLink from '@/components/UI/ActiveLink'
 
 const Container = styled.header`
   width: 100%;
@@ -22,7 +22,7 @@ const HeaderMargin = styled.div`
 
 const Wrapper = styled.div`
   width: 100%;
-  max-width: 1030px;
+  max-width: 1330px;
   padding: 0px 15px;
   display: flex;
   align-items: center;
@@ -63,8 +63,8 @@ const Header = () => {
             </Link>
           </Side>
           <LinkContainer>
-            <ActiveLink href='/'>Home</ActiveLink>
-            <ActiveLink href='/swap'>Swap</ActiveLink>
+            <ActiveLink href='/'>Marketplace</ActiveLink>
+            <ActiveLink href='/'>My Assets</ActiveLink>
           </LinkContainer>
           <Side $right>
             <ButtonConnect />

@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.1",
+    "@react-three/drei": "9.70.4",
+    "@react-three/fiber": "8.13.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/msgpack-lite": "^0.1.8",
     "@types/node": "20.3.3",
@@ -37,7 +39,9 @@
     "react-redux": "^8.1.2",
     "sharp": "^0.32.3",
     "styled-components": "^6.0.4",
+    "swiper": "^10.2.0",
     "swr": "^2.2.0",
+    "three": "0.152.2",
     "typescript": "5.1.6",
     "utf-8-validate": "^6.0.3",
     "viem": "^1.5.3",
