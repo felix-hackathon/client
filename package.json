@@ -7,8 +7,8 @@
     "dev": "TARGET_ENV=development next dev -p 5050",
     "build:local": "TARGET_ENV=local next build",
     "build:development": "TARGET_ENV=development next build",
-    "start:local": "TARGET_ENV=local next start -p 5050",
-    "start:development": "TARGET_ENV=development next start -p 5050",
+    "start:local": "TARGET_ENV=local next start -p 5051",
+    "start:development": "TARGET_ENV=development next start -p 5051",
     "lint": "next lint"
   },
   "dependencies": {
