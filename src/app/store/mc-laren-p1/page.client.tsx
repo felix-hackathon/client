@@ -107,12 +107,12 @@ const License = styled.div`
   div {
     position: absolute;
     bottom: 100%;
-    -webkit-transform: rotateZ(90deg);
+    transform: rotateZ(90deg);
     width: calc(100vh - 80px);
     transform-origin: 0 100%;
     white-space: nowrap;
     marquee {
-      -webkit-transform: rotate(180deg);
+      transform: rotate(180deg);
     }
   }
 `
