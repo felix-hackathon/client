@@ -86,7 +86,7 @@ const Color = styled.div<any>`
   width: 30px;
   height: 30px;
   border-radius: 10px;
-  background-color: ${(props) => props.bg};
+  background-color: ${(props) => props.$bg};
 `
 
 const OptionValue = styled.p`
@@ -199,7 +199,7 @@ const PorscheCarrareClient = () => {
           <OptionsContainer>
             {MainColors.map((i) => (
               <OptionContainer $active={i.value === carConfig.mainColor} key={i.value} onClick={() => onChangeConfig('mainColor', i.value)}>
-                <Color bg={i.value} />
+                <Color $bg={i.value} />
                 <OptionValue>
                   {i.title} - ${i.price}
                 </OptionValue>

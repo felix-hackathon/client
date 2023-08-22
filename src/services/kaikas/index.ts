@@ -10,7 +10,9 @@ export const isKaikas = typeof window !== 'undefined' && window.klaytn && window
 export default class KaikasService {
   static async initialize() {
     if (!isKaikas) {
-      throw Error('Kaikas is not installed')
+      // throw Error('Kaikas is not installed')
+      window.open('https://chrome.google.com/webstore/detail/kaikas/jblndlipeogpafnldhgmapagcccfchpi', '_blank')
+      return
     }
     try {
       await window.klaytn.enable()
