@@ -1,11 +1,10 @@
-import Web3Service from '@/services/web3'
-import { ethers } from 'ethers'
+import { isAddress } from 'ethers'
 import useSWR from 'swr'
 
 const useBalance = ({ userAddress, tokenAddress, chainId }: { userAddress?: string; tokenAddress?: string; chainId?: number }) => {
   const { data, isLoading } = useSWR(
     () => {
-      if (ethers.isAddress(userAddress) && ethers.isAddress(tokenAddress) && chainId) {
+      if (isAddress(userAddress) && isAddress(tokenAddress) && chainId) {
         return [`balance`, userAddress, tokenAddress, chainId]
       }
       return null
@@ -14,6 +13,7 @@ const useBalance = ({ userAddress, tokenAddress, chainId }: { userAddress?: stri
       const userAddress = queryKey[1]
       const tokenAddress = queryKey[2]
       const chainId = queryKey[3]
+      const Web3Service = (await import('@/services/web3')).default
       const res = await Web3Service.getBalance({
         chainId,
         tokenAddress,

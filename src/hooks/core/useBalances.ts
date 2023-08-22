@@ -1,4 +1,3 @@
-import Web3Service from '@/services/web3'
 import { ethers } from 'ethers'
 import useSWR from 'swr'
 
@@ -14,6 +13,7 @@ const useBalances = ({ userAddress, tokenAddresses, chainId }: { userAddress?: s
       const userAddress = queryKey[1]
       const tokenAddresses = queryKey[2]
       const chainId = queryKey[3]
+      const Web3Service = (await import('@/services/web3')).default
       const res = await Web3Service.getBalances({
         chainId,
         tokenAddresses,

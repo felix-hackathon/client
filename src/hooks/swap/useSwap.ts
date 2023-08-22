@@ -1,5 +1,3 @@
-import { fetcher } from '@/services/api'
-import KaikasService from '@/services/kaikas'
 import { mutate } from 'swr'
 import useSWRMutation from 'swr/mutation'
 
@@ -21,6 +19,7 @@ type ISwap = {
 
 const useSwap = (chainId: number) => {
   const { data, isMutating, error, trigger } = useSWRMutation(`/${chainId}/swap`, async (url, { arg }: { arg: ISwap }) => {
+    const { fetcher } = await import('@/services/api')
     const res = await fetcher({
       url,
       query: {
@@ -32,6 +31,7 @@ const useSwap = (chainId: number) => {
       },
     })
     if (res?.data) {
+      const KaikasService = (await import('@/services/kaikas')).default
       const rawTx = await KaikasService.signTransaction({
         type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
         to: res.data.tx.to,

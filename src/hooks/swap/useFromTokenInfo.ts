@@ -1,11 +1,8 @@
-import { NativeTokens } from '@/common/constants/web3'
-import { fetcher } from '@/services/api'
-import Web3Service from '@/services/web3'
-import erc20ABI from '@/services/web3/erc20ABI'
-import { ethers } from 'ethers'
+import { MaxUint256, isAddress } from 'ethers'
 import useSWR from 'swr'
 const useFromTokenInfo = ({ userAddress, tokenAddress, chainId }: { userAddress?: string; tokenAddress?: string; chainId?: number }) => {
   const { data: spender } = useSWR(`/${chainId}/swap/spender`, async (url: string) => {
+    const { fetcher } = await import('@/services/api')
     const res = await fetcher({
       url,
       throwError: false,
@@ -15,7 +12,7 @@ const useFromTokenInfo = ({ userAddress, tokenAddress, chainId }: { userAddress?
 
   const { data, isLoading } = useSWR(
     () => {
-      if (ethers.isAddress(userAddress) && ethers.isAddress(tokenAddress) && chainId && spender) {
+      if (isAddress(userAddress) && isAddress(tokenAddress) && chainId && spender) {
         return [`token-swap-info`, userAddress, tokenAddress, chainId, spender]
       }
       return null
@@ -25,6 +22,9 @@ const useFromTokenInfo = ({ userAddress, tokenAddress, chainId }: { userAddress?
       const tokenAddress = queryKey[2]
       const chainId = queryKey[3]
       const spender = queryKey[4]
+      const erc20ABI = await (await import('@/services/web3/erc20ABI')).default
+      const Web3Service = (await import('@/services/web3')).default
+      const { NativeTokens } = await import('@/common/constants/web3')
       if (NativeTokens.includes(tokenAddress)) {
         const res = await Web3Service.getBalance({
           chainId,
@@ -33,7 +33,7 @@ const useFromTokenInfo = ({ userAddress, tokenAddress, chainId }: { userAddress?
         })
         return {
           balance: res,
-          allowance: ethers.MaxUint256.toString(),
+          allowance: MaxUint256.toString(),
           hasPermit: false,
         }
       } else {

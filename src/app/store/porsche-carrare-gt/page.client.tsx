@@ -1,10 +1,11 @@
 'use client'
-import CarrareGT from '@/components/3D/Porsche/CarrareGT'
-import Scene from '@/components/3D/Scene'
 import BackButton from '@/components/UI/Button/Back'
-import PrimaryButton from '@/components/UI/Button/Primary'
+import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import { styled } from 'styled-components'
+const Scene = dynamic(() => import('@/components/3D/Scene'))
+const CarrareGT = dynamic(() => import('@/components/3D/Porsche/CarrareGT'))
+const PrimaryButton = dynamic(() => import('@/components/UI/Button/Primary'))
 
 const Container = styled.main`
   position: relative;
@@ -91,6 +92,28 @@ const Color = styled.div<any>`
 const OptionValue = styled.p`
   margin: 0px;
   color: #fff;
+`
+
+const License = styled.div`
+  position: fixed;
+  left: 10px;
+  top: 50px;
+  z-index: 10;
+  color: #bdbdbd;
+  font-size: 10px;
+  width: 100%;
+  pointer-events: none;
+  div {
+    position: absolute;
+    bottom: 100%;
+    -webkit-transform: rotateZ(90deg);
+    width: calc(100vh - 80px);
+    transform-origin: 0 100%;
+    white-space: nowrap;
+    marquee {
+      -webkit-transform: rotate(180deg);
+    }
+  }
 `
 
 const MainColors = [
@@ -208,6 +231,17 @@ const PorscheCarrareClient = () => {
           Buy
         </PrimaryButton>
       </InfoContainer>
+      <License>
+        <div>
+          {/** @ts-ignore */}
+          <marquee>
+            This work is based on "Porsche Carrera GT 2003 Street"
+            (https://sketchfab.com/3d-models/porsche-carrera-gt-2003-street-1880cd019d6f4bc2a8aec8a220bd5f0c) by Pitstop 3D - Euro
+            (https://sketchfab.com/carfan100) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+            {/** @ts-ignore */}
+          </marquee>
+        </div>
+      </License>
     </Container>
   )
 }

@@ -136,7 +136,7 @@ const SwapCard = ({ chainId }: { chainId: number }) => {
   const { userAddress } = useAuth()
 
   const { trigger, swapError, swapData, loadingSwap } = useSwap(chainId)
-  console.log(swapData, 'swapData')
+
   const handleSwitch = useCallback(() => {
     form.setValue('to', from)
     form.setValue('from', to)

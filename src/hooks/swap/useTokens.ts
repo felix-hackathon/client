@@ -1,7 +1,3 @@
-import { fetcher } from '@/services/api'
-import CacheService from '@/services/cache'
-import LocalStorageService from '@/services/storage'
-import getTokensInfo from '@/utils/getTokensInfo'
 import useSWR from 'swr'
 
 const useTokens = (chainId: number) => {
@@ -9,6 +5,10 @@ const useTokens = (chainId: number) => {
     `swap-token-${chainId}`,
     async () => {
       const keyListToken = `swap-list-tokens-${chainId}`
+      const { fetcher } = await import('@/services/api')
+      const CacheService = (await import('@/services/cache')).default
+      const LocalStorageService = (await import('@/services/storage')).default
+      const getTokensInfo = (await import('@/utils/getTokensInfo')).default
       let tokens = CacheService.get(keyListToken)
       if (!tokens) {
         const res = await fetcher({

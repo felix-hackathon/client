@@ -1,10 +1,11 @@
 'use client'
-import McLarenP1 from '@/components/3D/McLaren/P1'
-import Scene from '@/components/3D/Scene'
 import BackButton from '@/components/UI/Button/Back'
-import PrimaryButton from '@/components/UI/Button/Primary'
 import { useState } from 'react'
 import { styled } from 'styled-components'
+import dynamic from 'next/dynamic'
+import PrimaryButton from '@/components/UI/Button/Primary'
+const Scene = dynamic(() => import('@/components/3D/Scene'))
+const McLarenP1 = dynamic(() => import('@/components/3D/McLaren/P1'))
 
 const Container = styled.main`
   position: relative;
@@ -92,6 +93,28 @@ const Color = styled.div<any>`
 const OptionValue = styled.p`
   margin: 0px;
   color: #fff;
+`
+
+const License = styled.div`
+  position: fixed;
+  left: 10px;
+  top: 50px;
+  z-index: 10;
+  color: #bdbdbd;
+  font-size: 10px;
+  width: 100%;
+  pointer-events: none;
+  div {
+    position: absolute;
+    bottom: 100%;
+    -webkit-transform: rotateZ(90deg);
+    width: calc(100vh - 80px);
+    transform-origin: 0 100%;
+    white-space: nowrap;
+    marquee {
+      -webkit-transform: rotate(180deg);
+    }
+  }
 `
 
 const MainColors = [
@@ -257,6 +280,16 @@ const McLarenClient = () => {
           Buy
         </PrimaryButton>
       </InfoContainer>
+      <License>
+        <div>
+          {/** @ts-ignore */}
+          <marquee>
+            This work is based on "AC - Mclaren P1" (https://sketchfab.com/3d-models/ac-mclaren-p1-747cedadc302451db61deafc85941395) by DAVID 3D ART
+            (https://sketchfab.com/david3dart) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+            {/** @ts-ignore */}
+          </marquee>
+        </div>
+      </License>
     </Container>
   )
 }

@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
-import SwapClient from './page.client'
+import dynamic from 'next/dynamic'
+const SwapClient = dynamic(() => import('./page.client'))
 
 export const metadata: Metadata = {
   title: 'Swap',
