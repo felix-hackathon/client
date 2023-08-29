@@ -1,12 +1,14 @@
+import { CarContext } from '@/app/store/[slug]/page.client'
 import { useGLTF } from '@react-three/drei'
+import { useContext } from 'react'
 
-const CarrareGT = (props: any) => {
+const CarrareGT = () => {
   const { nodes, materials }: any = useGLTF('/assets/models/porsche-carrare/porsche.gltf')
-
+  const { config } = useContext(CarContext)
   return (
-    <group {...props} dispose={null} position={[0, -1, -0.5]} rotation={[0, -0.6, 0]}>
+    <group dispose={null} position={[0, -1, -0.5]} rotation={[0, -0.6, 0]}>
       <group position={[0, -0.01, 0]} rotation={[3.13, 0, Math.PI]}>
-        <mesh geometry={nodes.Object_4.geometry} material={materials.Main_Paint} material-color={props.config.mainColor} />
+        <mesh geometry={nodes.Object_4.geometry} material={materials.Main_Paint} material-color={config.mainColor} />
         <mesh geometry={nodes.Object_5.geometry} material={materials.Black} />
         <mesh geometry={nodes.Object_6.geometry} material={materials.Black} />
         <mesh geometry={nodes.Object_7.geometry} material={materials.Chrome} />
@@ -15,7 +17,7 @@ const CarrareGT = (props: any) => {
         <mesh geometry={nodes.Object_10.geometry} material={materials.Globes} />
         <mesh geometry={nodes.Object_11.geometry} material={materials.Mirrors} />
         <mesh geometry={nodes.Object_12.geometry} material={materials.material} />
-        <mesh geometry={nodes.Object_13.geometry} material={materials.Gold} material-color={props.config.caliper === 'brembo' ? 'red' : 'gray'} />
+        <mesh geometry={nodes.Object_13.geometry} material={materials.Gold} material-color={config.caliper === 'brembo' ? 'red' : 'gray'} />
       </group>
       <group position={[0, 0.05, -0.08]} rotation={[-Math.PI, 0, -Math.PI]} scale={[0.61, 0.65, 0.65]}>
         <mesh geometry={nodes.Object_15.geometry} material={materials.Chrome} />
@@ -24,7 +26,7 @@ const CarrareGT = (props: any) => {
 
       <mesh
         geometry={nodes.Object_18.geometry}
-        material={props.config.rim === 'chrome' ? materials.Chrome : materials.Rims}
+        material={config.rim === 'chrome' ? materials.Chrome : materials.Rims}
         position={[0, 0.05, 0.02]}
         scale={[0.61, 0.65, 0.65]}
       />

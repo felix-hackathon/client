@@ -1,9 +1,10 @@
+import { CarContext } from '@/app/store/[slug]/page.client'
 import { useGLTF } from '@react-three/drei'
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 
-const McLarenP1 = (props: any) => {
+const McLarenP1 = () => {
   const { nodes, materials }: any = useGLTF('/assets/models/mc-laren/mc-laren.gltf')
-  const { config } = props
+  const { config } = useContext(CarContext)
 
   const brakeDiskColor = useMemo(() => {
     switch (config.brakeDisk) {
@@ -17,7 +18,7 @@ const McLarenP1 = (props: any) => {
   }, [config.brakeDisk])
 
   return (
-    <group {...props} position={[0, -1, -0.5]} rotation={[0, 0.7, 0]} dispose={null}>
+    <group position={[0, -1, -0.5]} rotation={[0, 0.7, 0]} dispose={null}>
       <group rotation={[-Math.PI / 2, 0, 0]} scale={2.75}>
         <group rotation={[Math.PI / 2, 0, 0]} scale={0.01}>
           <group position={[-36.41, 14.32, 53.21]}>
@@ -140,8 +141,8 @@ const McLarenP1 = (props: any) => {
             <mesh geometry={nodes.GEO_DOOR_RR_SUB3_Windows_0.geometry} material={materials.Windows} />
             <mesh geometry={nodes.GEO_DOOR_RR_SUB2_Windows_alpha_0.geometry} material={materials.Windows_alpha} />
             <mesh geometry={nodes.GEO_DOOR_RR_SUB5_Carbon_Mult50_0.geometry} material={materials.Carbon_Mult50} />
-            <mesh geometry={nodes.GEO_DOOR_RR_SUB1_Carpaint_Black_0.geometry} material={materials.Carpaint_Black} material-color={props.config?.mainColor} />
-            <mesh geometry={nodes.GEO_DOOR_RR_SUB0_Carpaint_0.geometry} material={materials.Carpaint} material-color={props.config?.mainColor} />
+            <mesh geometry={nodes.GEO_DOOR_RR_SUB1_Carpaint_Black_0.geometry} material={materials.Carpaint_Black} material-color={config?.mainColor} />
+            <mesh geometry={nodes.GEO_DOOR_RR_SUB0_Carpaint_0.geometry} material={materials.Carpaint} material-color={config?.mainColor} />
           </group>
           <group position={[18.1, 49.45, 8.91]} rotation={[-0.38, -1.01, -0.68]}>
             <group position={[-15.03, -12.05, 30.66]} rotation={[0.57, -0.85, 0.15]}>
@@ -181,8 +182,8 @@ const McLarenP1 = (props: any) => {
             <mesh geometry={nodes.polymsh5_SUB4_Windows_0.geometry} material={materials.Windows} />
             <mesh geometry={nodes.polymsh5_SUB5_Windows_alpha_0.geometry} material={materials.Windows_alpha} />
             <mesh geometry={nodes.polymsh5_SUB3_Carbon_Mult50_0.geometry} material={materials.Carbon_Mult50} />
-            <mesh geometry={nodes.polymsh5_SUB1_Carpaint_Black_0.geometry} material={materials.Carpaint_Black} material-color={props.config.mainColor} />
-            <mesh geometry={nodes.polymsh5_SUB0_Carpaint_0.geometry} material={materials.Carpaint} material-color={props.config.mainColor} />
+            <mesh geometry={nodes.polymsh5_SUB1_Carpaint_Black_0.geometry} material={materials.Carpaint_Black} material-color={config.mainColor} />
+            <mesh geometry={nodes.polymsh5_SUB0_Carpaint_0.geometry} material={materials.Carpaint} material-color={config.mainColor} />
           </group>
           <group position={[-34.81, 15.46, -65.08]}>
             <group position={[1.82, 0, 0]} rotation={[-Math.PI / 2, 0, Math.PI / 2]}>
@@ -222,7 +223,7 @@ const McLarenP1 = (props: any) => {
                 <group rotation={[0, 0, 0.9]}>
                   <mesh geometry={nodes.g_Wing_SUB1_Chrome_0.geometry} material={materials.Chrome} />
                   <mesh geometry={nodes.g_Wing_SUB3_Details_0.geometry} material={materials.Details} />
-                  <mesh geometry={nodes.g_Wing_SUB2_Carpaint_0.geometry} material={materials.Carpaint} material-color={props.config.mainColor} />
+                  <mesh geometry={nodes.g_Wing_SUB2_Carpaint_0.geometry} material={materials.Carpaint} material-color={config.mainColor} />
                   <mesh geometry={nodes.g_Wing_SUB0_Matte_Black_0.geometry} material={materials.Matte_Black} />
                 </group>
               </group>
@@ -302,10 +303,10 @@ const McLarenP1 = (props: any) => {
             <mesh geometry={nodes.g_Body_SUB0_Windows_0.geometry} material={materials.Windows} />
             <mesh geometry={nodes.g_Body_SUB12_Mechanicals_0.geometry} material={materials.Mechanicals} />
             <mesh geometry={nodes.g_Body_SUB10_Details_0.geometry} material={materials.Details} />
-            <mesh geometry={nodes.g_Body_SUB4_Carpaint_Black_0.geometry} material={materials.Carpaint_Black} material-color={props.config.mainColor} />
+            <mesh geometry={nodes.g_Body_SUB4_Carpaint_Black_0.geometry} material={materials.Carpaint_Black} material-color={config.mainColor} />
             <mesh geometry={nodes.g_Body_SUB5_Carbon_Mult50_0.geometry} material={materials.Carbon_Mult50} />
-            <mesh geometry={nodes.g_Body_SUB1_Carpaint_Black_0.geometry} material={materials.Carpaint_Black} material-color={props.config.mainColor} />
-            <mesh geometry={nodes.g_Body_SUB2_Carpaint_0.geometry} material={materials.Carpaint} material-color={props.config.mainColor} />
+            <mesh geometry={nodes.g_Body_SUB1_Carpaint_Black_0.geometry} material={materials.Carpaint_Black} material-color={config.mainColor} />
+            <mesh geometry={nodes.g_Body_SUB2_Carpaint_0.geometry} material={materials.Carpaint} material-color={config.mainColor} />
             <mesh geometry={nodes.g_Body_SUB11_Matte_Black_0.geometry} material={materials.Matte_Black} />
             <mesh geometry={nodes.g_Body_SUB9_Grid2_0.geometry} material={materials.Grid2} />
             <mesh geometry={nodes.g_Body_SUB8_Grid1_Mult70_0.geometry} material={materials.Grid1_Mult70} />
@@ -313,7 +314,7 @@ const McLarenP1 = (props: any) => {
           <group position={[0, 33.86, 46.54]}>
             <group position={[0, -8.01, 26.45]} rotation={[0, Math.PI / 2, 0]}>
               <mesh geometry={nodes.GEO_HOOD_SUB2_Details_0.geometry} material={materials.Details} />
-              <mesh geometry={nodes.GEO_HOOD_SUB0_Carpaint_0.geometry} material={materials.Carpaint} material-color={props.config.mainColor} />
+              <mesh geometry={nodes.GEO_HOOD_SUB0_Carpaint_0.geometry} material={materials.Carpaint} material-color={config.mainColor} />
               <mesh geometry={nodes.GEO_HOOD_SUB1_Matte_Black_0.geometry} material={materials.Matte_Black} />
             </group>
           </group>
@@ -431,7 +432,7 @@ const McLarenP1 = (props: any) => {
           <mesh geometry={nodes.LED_OIL_1_2_INT_DISPLAY_0.geometry} material={materials.INT_DISPLAY} />
           <mesh geometry={nodes.LED_OIL_2_2_INT_DISPLAY_0.geometry} material={materials.INT_DISPLAY} />
           <mesh geometry={nodes.LED_OIL_3_2_INT_DISPLAY_0.geometry} material={materials.INT_DISPLAY} />
-          <mesh geometry={nodes.GEO_frontFender_2_Carpaint_0.geometry} material={materials.Carpaint} material-color={props.config.mainColor} />
+          <mesh geometry={nodes.GEO_frontFender_2_Carpaint_0.geometry} material={materials.Carpaint} material-color={config.mainColor} />
           <mesh geometry={nodes.polymsh_detached73_SUB0_Windows_0.geometry} material={materials.Windows} />
           <mesh geometry={nodes.polymsh_detached73_SUB1_Windows_alpha_0.geometry} material={materials.Windows_alpha} />
         </group>
