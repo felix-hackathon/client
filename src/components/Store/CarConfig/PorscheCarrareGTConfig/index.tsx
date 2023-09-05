@@ -1,4 +1,4 @@
-import { CarContext } from '@/app/store/[slug]/page.client'
+import { Car, CarContext } from '@/app/store/[slug]/page.client'
 import PrimaryButton from '@/components/UI/Button/Primary'
 import { useContext } from 'react'
 import { styled } from 'styled-components'
@@ -77,103 +77,34 @@ const OptionValue = styled.p`
   color: #fff;
 `
 
-const MainColors = [
-  {
-    title: 'Red',
-    value: 'red',
-    price: '0',
-  },
-  {
-    title: 'Blue',
-    value: 'blue',
-    price: '1000',
-  },
-  {
-    title: 'Silver',
-    value: 'silver',
-    price: '2000',
-  },
-  {
-    title: 'Gray',
-    value: 'gray',
-    price: '2000',
-  },
-  {
-    title: 'Black',
-    value: 'black',
-    price: '2500',
-  },
-]
-
-const CaliperConfig = [
-  {
-    title: 'Normal',
-    value: 'normal',
-    price: '0',
-  },
-  {
-    title: 'Brembo',
-    value: 'brembo',
-    price: '2000',
-  },
-]
-
-const RimConfig = [
-  {
-    title: 'Normal',
-    value: 'normal',
-    price: '0',
-  },
-  {
-    title: 'Chrome',
-    value: 'chrome',
-    price: '1000',
-  },
-]
-
-const PorscheCarrareGTConfig = () => {
-  const { config, onChangeConfig } = useContext(CarContext)
+const PorscheCarrareGTConfig = ({ slug }: { slug: any }) => {
+  const { config, onChangeConfig, setStep } = useContext(CarContext)
+  const car = Car[slug]
   return (
     <InfoContainer>
       <div>
-        <Name>Porsche Carrare GT</Name>
+        <Name>{car.name}</Name>
         <PriceContainer>
-          <Price>2,000,000 KLAY ~ 500,000 USD</Price>
+          <Price>{car.price} KLAY</Price>
         </PriceContainer>
         <Title>Car options</Title>
-        <OptionTitle>Main color:</OptionTitle>
-        <OptionsContainer>
-          {MainColors.map((i) => (
-            <OptionContainer $active={i.value === config.mainColor} key={i.value} onClick={() => onChangeConfig('mainColor', i.value)}>
-              <Color $bg={i.value} />
-              <OptionValue>
-                {i.title} - ${i.price}
-              </OptionValue>
-            </OptionContainer>
-          ))}
-        </OptionsContainer>
-        <OptionTitle>Calipers:</OptionTitle>
-        <OptionsContainer>
-          {CaliperConfig.map((i) => (
-            <OptionContainer key={i.value} $active={config.caliper === i.value} onClick={() => onChangeConfig('caliper', i.value)}>
-              <OptionValue>
-                {i.title} - ${i.price}
-              </OptionValue>
-            </OptionContainer>
-          ))}
-        </OptionsContainer>
-        <OptionTitle>Rims:</OptionTitle>
-        <OptionsContainer>
-          {RimConfig.map((i) => (
-            <OptionContainer key={i.value} $active={config.rim === i.value} onClick={() => onChangeConfig('rim', i.value)}>
-              <OptionValue>
-                {i.title} - ${i.price}
-              </OptionValue>
-            </OptionContainer>
-          ))}
-        </OptionsContainer>
+        {car.attribute.map((ele) => (
+          <>
+            <OptionTitle>{ele.name}:</OptionTitle>
+            <OptionsContainer>
+              {ele.options.map((i) => (
+                <OptionContainer $active={i.key === (config as any)[ele.key]} key={i.key} onClick={() => onChangeConfig(ele.key, i.key)}>
+                  {i.icon && <Color $bg={i.icon} />}
+                  <OptionValue>
+                    {i.name} - ${i.price}
+                  </OptionValue>
+                </OptionContainer>
+              ))}
+            </OptionsContainer>
+          </>
+        ))}
       </div>
-      <PrimaryButton width='300px' className='MT50 MB20'>
+      <PrimaryButton onClick={() => setStep('buy')} width='300px' className='MT50 MB20'>
         Buy
       </PrimaryButton>
     </InfoContainer>

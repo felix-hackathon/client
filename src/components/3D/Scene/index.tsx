@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { MeshReflectorMaterial, PresentationControls, Stage, OrbitControls } from '@react-three/drei'
+import { MeshReflectorMaterial, PresentationControls, Stage } from '@react-three/drei'
 import React, { Suspense } from 'react'
 
 const Scene = ({ children }: { children: React.ReactNode }) => {
@@ -11,7 +11,6 @@ const Scene = ({ children }: { children: React.ReactNode }) => {
       <PresentationControls speed={1.2} global zoom={0.5} polar={[-0.2, Math.PI / 4]}>
         <Stage environment={'city'} intensity={0.6} contactShadow={false}>
           <Suspense fallback={null}>{children}</Suspense>
-          <OrbitControls target={[0, 0, 0]} autoRotate />
         </Stage>
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.2, 0]}>
           <planeGeometry args={[170, 170]} />
