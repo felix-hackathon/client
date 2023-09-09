@@ -123,7 +123,7 @@ const Buy = ({ slug }: { slug: string }) => {
         <SelectPaymentCurrency>Select Payment Currency</SelectPaymentCurrency>
         <SelectTokenContainer>
           <AmountToken>
-            {data?.total} {token.symbol}
+            {data?.total} {token?.symbol}
           </AmountToken>
           <SelectToken />
         </SelectTokenContainer>
