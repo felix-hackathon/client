@@ -119,27 +119,19 @@ const Buy = ({ slug }: { slug: string }) => {
 
   const handleBuy = async () => {
     setLoading(true)
+    const values = [data?.type, data?.attribute?.map((attribute) => [attribute.address, attribute.value.type]), userAddress]
     const KaikasService = (await import('@/services/kaikas')).default
     const rawTx = await KaikasService.signTransaction({
       type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
       to: '0xC442E3959d5c84fC23BB415efcB1f3aab408Da76',
-      data: Web3Service.encodeAbi(carABI, 'safeMint', [
-        '1',
-        [
-          ['0xf4625Fc99cD22ec41CCD4B43f033443e06C4cA10', '1'],
-          ['0x13Ce0e22D4ca7E528f9F83B6a2cA7B51F8B72954', '1'],
-          ['0x437d29aB27449465C8E61603334eFc761355b5E9', '1'],
-          ['0xBB02393a1bD8276691697fFbA35f1B14f64C2Dd6', '1'],
-        ],
-        userAddress,
-      ]),
+      data: Web3Service.encodeAbi(carABI, 'safeMint', values),
       gas: '710000',
       from: userAddress as string,
     }).catch((e) => {
       console.log(e)
       return null
     })
-    console.log(rawTx, 'rawTx')
+    console.log('rawTx', rawTx)
     if (rawTx) {
       const resTx = await fetcher({
         url: '/1001/transaction',

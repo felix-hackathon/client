@@ -89,7 +89,7 @@ const PorscheCarrareGTConfig = ({ slug }: { slug: any }) => {
         </PriceContainer>
         <Title>Car options</Title>
         {car.attribute.map((ele) => (
-          <>
+          <div key={ele.key}>
             <OptionTitle>{ele.name}:</OptionTitle>
             <OptionsContainer>
               {ele.options.map((i) => (
@@ -101,7 +101,7 @@ const PorscheCarrareGTConfig = ({ slug }: { slug: any }) => {
                 </OptionContainer>
               ))}
             </OptionsContainer>
-          </>
+          </div>
         ))}
       </div>
       <PrimaryButton onClick={() => setStep('buy')} width='300px' className='MT50 MB20'>
