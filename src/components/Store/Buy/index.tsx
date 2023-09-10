@@ -160,8 +160,9 @@ const Buy = ({ slug }: { slug: string }) => {
     const rawTx = await KaikasService.signTransaction({
       type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
       to: AppConfig.carAddress,
-      data: Web3Service.encodeAbi(carABI as any, 'safeMint', values),
-      gas: '710000',
+      value: parseUnits('0.7'.toString(), 18).toString(),
+      data: Web3Service.encodeAbi(carABI as any, 'buy', values),
+      gas: '1400000',
       from: userAddress as string,
     }).catch((e) => {
       console.log(e)

@@ -3,6 +3,8 @@ import { createContext, useState } from 'react'
 import { styled } from 'styled-components'
 import dynamic from 'next/dynamic'
 import Buy from '@/components/Store/Buy'
+import AppConfig from '@/config'
+
 const BackButton = dynamic(() => import('@/components/UI/Button/Back'))
 const Cars = dynamic(() => import('@/components/3D/Cars'))
 const License = dynamic(() => import('@/components/Store/License'))
@@ -77,13 +79,13 @@ export const Car: Record<string, ICar> = {
   'mc-laren-p1': {
     key: 'mc-laren-p1',
     name: 'MC Laren P1',
-    address: '0xXe',
-    price: '1000000',
+    address: AppConfig.carAddress,
+    price: '50',
     type: '1',
     attribute: [
       {
         key: 'mainColor',
-        address: '0xMainColor',
+        address: AppConfig.colorAddress,
         name: 'Main Color',
         options: [
           {
@@ -103,14 +105,14 @@ export const Car: Record<string, ICar> = {
           {
             key: 'black',
             name: 'Black',
-            price: '2000',
+            price: '10',
             type: '3',
             icon: 'black',
           },
           {
             key: 'red',
             name: 'Red',
-            price: '2000',
+            price: '15',
             type: '4',
             icon: 'red',
           },
@@ -118,7 +120,7 @@ export const Car: Record<string, ICar> = {
       },
       {
         key: 'caliper',
-        address: '0xCalipers',
+        address: AppConfig.caliperAddress,
         name: 'Calipers',
         options: [
           {
@@ -130,14 +132,14 @@ export const Car: Record<string, ICar> = {
           {
             key: 'brembo',
             name: 'Brembo',
-            price: '5000',
+            price: '5',
             type: '2',
           },
         ],
       },
       {
         key: 'rim',
-        address: '0xRim',
+        address: AppConfig.rimAddress,
         name: 'Rim',
         options: [
           {
@@ -149,14 +151,14 @@ export const Car: Record<string, ICar> = {
           {
             key: 'white',
             name: 'White',
-            price: '2500',
+            price: '20',
             type: '2',
           },
         ],
       },
       {
         key: 'brakeDisk',
-        address: '0xBrakeDisk',
+        address: AppConfig.brakeDiskAddress,
         name: 'Brake Disk',
         options: [
           {
@@ -168,20 +170,20 @@ export const Car: Record<string, ICar> = {
           {
             key: 'ceramic',
             name: 'Ceramic',
-            price: '2000',
+            price: '5',
             type: '2',
           },
           {
             key: 'carbon',
             name: 'Carbon',
-            price: '5000',
+            price: '10',
             type: '3',
           },
         ],
       },
       {
         key: 'windshield',
-        address: '0xWindShield',
+        address: AppConfig.windShieldAddress,
         name: 'Wind Shield',
         options: [
           {
@@ -193,7 +195,7 @@ export const Car: Record<string, ICar> = {
           {
             key: 'black',
             name: 'Black',
-            price: '1000',
+            price: '10',
             type: '2',
           },
         ],
@@ -203,55 +205,55 @@ export const Car: Record<string, ICar> = {
   'porsche-carrare-gt': {
     key: 'porsche-carrare-gt',
     name: 'Porsche Carrare GT',
-    address: '0xXe',
-    price: '1000000',
+    address: AppConfig.carAddress,
+    price: '50',
     type: '2',
     attribute: [
       {
         key: 'mainColor',
         name: 'Main Color',
-        address: '0xMainColor',
+        address: AppConfig.colorAddress,
         options: [
-          {
-            key: 'red',
-            name: 'Red',
-            price: '0',
-            type: '1',
-            icon: 'red',
-          },
-          {
-            key: 'blue',
-            name: 'Blue',
-            price: '1000',
-            type: '2',
-            icon: 'blue',
-          },
-          {
-            key: 'silver',
-            name: 'Silver',
-            price: '2000',
-            type: '3',
-            icon: 'silver',
-          },
           {
             key: 'gray',
             name: 'Gray',
-            price: '2000',
-            type: '4',
+            price: '0',
+            type: '1',
             icon: 'gray',
           },
           {
             key: 'black',
             name: 'Black',
-            price: '2500',
-            type: '5',
+            price: '10',
+            type: '3',
             icon: 'black',
+          },
+          {
+            key: 'red',
+            name: 'Red',
+            price: '15',
+            type: '4',
+            icon: 'red',
+          },
+          {
+            key: 'blue',
+            name: 'Blue',
+            price: '20',
+            type: '5',
+            icon: 'blue',
+          },
+          {
+            key: 'silver',
+            name: 'Silver',
+            price: '25',
+            type: '6',
+            icon: 'silver',
           },
         ],
       },
       {
         key: 'caliper',
-        address: '0xCalipers',
+        address: AppConfig.caliperAddress,
         name: 'Calipers',
         options: [
           {
@@ -263,14 +265,14 @@ export const Car: Record<string, ICar> = {
           {
             key: 'brembo',
             name: 'Brembo',
-            price: '5000',
+            price: '5',
             type: '2',
           },
         ],
       },
       {
         key: 'rim',
-        address: '0xRim',
+        address: AppConfig.rimAddress,
         name: 'Rim',
         options: [
           {
@@ -282,8 +284,8 @@ export const Car: Record<string, ICar> = {
           {
             key: 'chrome',
             name: 'Chrome',
-            price: '1500',
-            type: '2',
+            price: '15',
+            type: '3',
           },
         ],
       },
