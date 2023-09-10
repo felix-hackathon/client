@@ -29,7 +29,7 @@ const TokenIcon = styled.img`
 const TokenSymbol = styled.div`
   color: #fff;
 `
-const SelectToken = ({ value, onChange, chainId }: { value: string; onChange?: (v: string) => any; chainId?: number }) => {
+const SelectToken = ({ value, onChange, chainId }: { value: string; onChange?: (v: string) => any; chainId: number }) => {
   const { openModal } = useModal()
   const { token } = useToken({
     chainId,
