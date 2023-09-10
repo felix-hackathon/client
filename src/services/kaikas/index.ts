@@ -301,6 +301,7 @@ export default class KaikasService {
       })
       return res?.rawTransaction || null
     } catch (error) {
+      console.log(error)
       return null
     }
   }

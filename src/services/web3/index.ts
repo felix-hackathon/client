@@ -35,6 +35,11 @@ export default class Web3Service {
     return new Contract(address, erc20ABI, provider)
   }
 
+  static encodeAbi(abi: any[], functionName: string, args: any[]) {
+    const iface = Interface.from(abi)
+    return iface.encodeFunctionData(functionName, args)
+  }
+
   static async multicall<TContracts extends ContractFunctionConfig[] = ContractFunctionConfig[]>(options: MulticallOptions<TContracts>) {
     const { chainId, contracts, multicallAddress, chunkSize = 1024 } = options
     const contract = await this.createMulticallContract(chainId, multicallAddress)

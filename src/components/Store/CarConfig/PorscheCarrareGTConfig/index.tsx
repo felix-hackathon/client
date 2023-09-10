@@ -1,4 +1,4 @@
-import { Car, CarContext } from '@/app/store/[slug]/page.client'
+import { Car, CarContext } from '@/app/(app)/store/[slug]/page.client'
 import PrimaryButton from '@/components/UI/Button/Primary'
 import { useContext } from 'react'
 import { styled } from 'styled-components'

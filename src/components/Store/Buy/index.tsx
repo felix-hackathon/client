@@ -1,10 +1,13 @@
-import { Car, CarContext } from '@/app/store/[slug]/page.client'
+import { Car, CarContext } from '@/app/(app)/store/[slug]/page.client'
 import BigNumber from 'bignumber.js'
-import { useContext, useMemo } from 'react'
+import { useContext, useMemo, useState } from 'react'
 import { styled } from 'styled-components'
-import SelectToken from '../SelectToken'
 import PrimaryButton from '@/components/UI/Button/Primary'
 import useToken from '@/hooks/useToken'
+import useAuth from '@/hooks/core/useAuth'
+import { fetcher } from '@/services/api'
+import Web3Service from '@/services/web3'
+import carABI from '@/services/web3/carABI'
 
 const Container = styled.div`
   width: 100%;
@@ -68,10 +71,14 @@ const AmountToken = styled.div`
 
 const Buy = ({ slug }: { slug: string }) => {
   const { config } = useContext(CarContext)
+  const { userAddress } = useAuth()
   const { token } = useToken({
     chainId: 8217,
     address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
   })
+
+  const [loading, setLoading] = useState(false)
+
   const data = useMemo(() => {
     const carConfig = Car[slug]
     let result: {
@@ -107,7 +114,45 @@ const Buy = ({ slug }: { slug: string }) => {
     })
     return result
   }, [slug, config])
-  console.log(data)
+
+  const handleBuy = async () => {
+    setLoading(true)
+    const KaikasService = (await import('@/services/kaikas')).default
+    const rawTx = await KaikasService.signTransaction({
+      type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
+      to: '0xf698B6C2062F91F2d1443dA345a5eBBE0DFA7d5B',
+      data: Web3Service.encodeAbi(carABI, 'safeMint', [
+        '1',
+        [
+          ['0xf4625Fc99cD22ec41CCD4B43f033443e06C4cA10', '1'],
+          ['0x13Ce0e22D4ca7E528f9F83B6a2cA7B51F8B72954', '1'],
+          ['0x437d29aB27449465C8E61603334eFc761355b5E9', '1'],
+          ['0xBB02393a1bD8276691697fFbA35f1B14f64C2Dd6', '1'],
+        ],
+        userAddress,
+      ]),
+      gas: '510000',
+      from: userAddress as string,
+    }).catch((e) => {
+      console.log(e)
+      return null
+    })
+    console.log(rawTx, 'rawTx')
+    if (rawTx) {
+      const resTx = await fetcher({
+        url: '/1001/transaction',
+        method: 'POST',
+        body: {
+          rawTx,
+        },
+        throwError: false,
+      })
+      console.log(resTx)
+      return resTx
+    }
+    setLoading(false)
+  }
+
   return (
     <Container>
       <Title>Purchase</Title>
@@ -119,7 +164,7 @@ const Buy = ({ slug }: { slug: string }) => {
           </Detail>
         ))}
       </InfoContainer>
-      <InfoContainer>
+      {/* <InfoContainer>
         <SelectPaymentCurrency>Select Payment Currency</SelectPaymentCurrency>
         <SelectTokenContainer>
           <AmountToken>
@@ -127,8 +172,8 @@ const Buy = ({ slug }: { slug: string }) => {
           </AmountToken>
           <SelectToken />
         </SelectTokenContainer>
-      </InfoContainer>
-      <PrimaryButton width='300px' className='MT50 MB20'>
+      </InfoContainer> */}
+      <PrimaryButton onClick={() => handleBuy()} loading={loading} width='300px' className='MT50 MB20'>
         Buy
       </PrimaryButton>
     </Container>

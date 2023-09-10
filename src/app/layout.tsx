@@ -1,7 +1,6 @@
 import './globals.scss'
 import { Roboto_Mono } from 'next/font/google'
 import Providers from '@/providers'
-import LayoutClient from './layout.client'
 import { Metadata } from 'next'
 
 const inter = Roboto_Mono({
@@ -27,9 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang='en'>
       <body className={inter.className} suppressHydrationWarning={true}>
-        <Providers>
-          <LayoutClient>{children}</LayoutClient>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

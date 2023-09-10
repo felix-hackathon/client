@@ -1,10 +1,8 @@
-import { CarContext } from '@/app/store/[slug]/page.client'
 import { useGLTF } from '@react-three/drei'
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 
-const McLarenP1 = () => {
+const McLarenP1 = ({ config }: { config: any }) => {
   const { nodes, materials }: any = useGLTF('/assets/models/mc-laren/mc-laren.gltf')
-  const { config } = useContext(CarContext)
 
   const brakeDiskColor = useMemo(() => {
     switch (config.brakeDisk) {

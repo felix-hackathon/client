@@ -1,10 +1,7 @@
-import { CarContext } from '@/app/store/[slug]/page.client'
 import { useGLTF } from '@react-three/drei'
-import { useContext } from 'react'
 
-const CarrareGT = () => {
+const CarrareGT = ({ config }: { config: any }) => {
   const { nodes, materials }: any = useGLTF('/assets/models/porsche-carrare/porsche.gltf')
-  const { config } = useContext(CarContext)
   return (
     <group dispose={null} position={[0, -1, -0.5]} rotation={[0, -0.6, 0]}>
       <group position={[0, -0.01, 0]} rotation={[3.13, 0, Math.PI]}>
