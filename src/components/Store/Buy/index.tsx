@@ -10,6 +10,7 @@ import { fetcher } from '@/services/api'
 import Web3Service from '@/services/web3'
 import carABI from '@/services/web3/carABI'
 import SelectToken from '../SelectToken'
+import AppConfig from '@/config'
 
 const Container = styled.div`
   width: 100%;
