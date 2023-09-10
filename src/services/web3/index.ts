@@ -293,8 +293,8 @@ export default class Web3Service {
         {
           abi: carABI,
           address: AppConfig.carAddress as any,
-          functionName: 'balanceOf',
-          args: ['0xc95C0EC40937aD81F34c8b0836680b7681b7bF60' as any],
+          functionName: 'getTokenType',
+          args: [id as any],
         },
         {
           abi: [
@@ -344,9 +344,91 @@ export default class Web3Service {
         },
       ],
     })
-    const tbaAddress = result1?.[1]?.[0] || ''
-    return {
-      tbaAddress,
+    const result: Record<string, any> = {
+      type: result1?.[0]?.[0]?.toString(),
+      tbaAddress: result1?.[1]?.[0] || '',
     }
+
+    const result2 = await this.multicall({
+      chainId,
+      contracts: [
+        {
+          abi: carABI,
+          address: AppConfig.colorAddress,
+          functionName: 'tokenOfOwnerByIndex',
+          args: [result.tbaAddress, BigInt(0)],
+        },
+        {
+          abi: carABI,
+          address: AppConfig.caliperAddress,
+          functionName: 'tokenOfOwnerByIndex',
+          args: [result.tbaAddress, BigInt(0)],
+        },
+        {
+          abi: carABI,
+          address: AppConfig.rimAddress,
+          functionName: 'tokenOfOwnerByIndex',
+          args: [result.tbaAddress, BigInt(0)],
+        },
+        {
+          abi: carABI,
+          address: AppConfig.brakeDiskAddress,
+          functionName: 'tokenOfOwnerByIndex',
+          args: [result.tbaAddress, BigInt(0)],
+        },
+        {
+          abi: carABI,
+          address: AppConfig.windShieldAddress,
+          functionName: 'tokenOfOwnerByIndex',
+          args: [result.tbaAddress, BigInt(0)],
+        },
+      ],
+    })
+    result.nftIdColor = result2?.[0]?.[0]?.toString() || null
+    result.nftIdCaliper = result2?.[1]?.[0]?.toString() || null
+    result.nftIdRim = result2?.[2]?.[0]?.toString() || null
+    result.nftIdBrakeDisk = result2?.[3]?.[0]?.toString() || null
+    result.nftIdWindShield = result2?.[4]?.[0]?.toString() || null
+    const result3 = await this.multicall({
+      chainId,
+      contracts: [
+        {
+          abi: carABI,
+          address: AppConfig.colorAddress,
+          functionName: 'getTokenType',
+          args: [result.nftIdColor || '0'],
+        },
+        {
+          abi: carABI,
+          address: AppConfig.caliperAddress,
+          functionName: 'getTokenType',
+          args: [result.nftIdCaliper || '0'],
+        },
+        {
+          abi: carABI,
+          address: AppConfig.rimAddress,
+          functionName: 'getTokenType',
+          args: [result.nftIdRim || '0'],
+        },
+        {
+          abi: carABI,
+          address: AppConfig.brakeDiskAddress,
+          functionName: 'getTokenType',
+          args: [result.nftIdBrakeDisk || '0'],
+        },
+        {
+          abi: carABI,
+          address: AppConfig.windShieldAddress,
+          functionName: 'getTokenType',
+          args: [result.nftIdWindShield || '0'],
+        },
+      ],
+    })
+    result.typeColor = result2?.[0]?.[0]?.toString() || null
+    result.typeCaliper = result2?.[1]?.[0]?.toString() || null
+    result.typeRim = result2?.[2]?.[0]?.toString() || null
+    result.typeBrakeDisk = result2?.[3]?.[0]?.toString() || null
+    result.typeWindShield = result2?.[4]?.[0]?.toString() || null
+    return result
   }
 }

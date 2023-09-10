@@ -11,6 +11,7 @@ import Web3Service from '@/services/web3'
 import carABI from '@/services/web3/carABI'
 import SelectToken from '../SelectToken'
 import AppConfig from '@/config'
+import routerABI from '@/services/web3/routerABI'
 
 const Container = styled.div`
   width: 100%;
@@ -147,7 +148,6 @@ const Buy = ({ slug }: { slug: string }) => {
         throwError: false,
       })
       console.log(resTx)
-      return resTx
     }
     setLoading(false)
   }
@@ -156,10 +156,11 @@ const Buy = ({ slug }: { slug: string }) => {
     setLoading(true)
     const values = [data?.type, data?.attribute?.map((attribute) => [attribute.address, attribute.value.type]), userAddress]
     const KaikasService = (await import('@/services/kaikas')).default
+    console.log(values)
     const rawTx = await KaikasService.signTransaction({
       type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
       to: AppConfig.carAddress,
-      data: Web3Service.encodeAbi(carABI, 'safeMint', values),
+      data: Web3Service.encodeAbi(carABI as any, 'safeMint', values),
       gas: '710000',
       from: userAddress as string,
     }).catch((e) => {
@@ -177,7 +178,6 @@ const Buy = ({ slug }: { slug: string }) => {
         throwError: false,
       })
       console.log(resTx)
-      return resTx
     }
     setLoading(false)
   }
@@ -202,7 +202,7 @@ const Buy = ({ slug }: { slug: string }) => {
           <SelectToken value={tokenAddress} onChange={(v) => setTokenAddress(v)} chainId={8217} />
         </SelectTokenContainer>
       </InfoContainer>
-      <PrimaryButton onClick={() => handleSwap()} loading={loading} width='300px' className='MT50 MB20'>
+      <PrimaryButton onClick={() => handleBuy()} loading={loading} width='300px' className='MT50 MB20'>
         Buy
       </PrimaryButton>
     </Container>

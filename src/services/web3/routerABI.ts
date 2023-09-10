@@ -38,4 +38,6 @@ const routerABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-]
+] as any
+
+export default routerABI
