@@ -6,7 +6,7 @@ import Content from './Content'
 
 const ButtonContainer = styled.div`
   position: absolute;
-  bottom: 10px;
+  top: 10px;
   left: 10px;
   width: 40px;
   aspect-ratio: 1;
