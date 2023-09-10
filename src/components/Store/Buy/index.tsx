@@ -123,14 +123,19 @@ const Buy = ({ slug }: { slug: string }) => {
   const handleSwap = async () => {
     console.log(window.caver.klay)
     setLoading(true)
+
     // testing swap receive exact KLAYTN
     const KaikasService = (await import('@/services/kaikas')).default
     const usdt = '0x63b3ace91d182013fed2ebaa0a8dd9aea243e865'
     const wklay = '0xbb3273dc4cac595afb93559c3aa07e9e6a554fc0'
+    const tokenOutAmount = parseUnits('1'.toString(), 18).toString()
+    const tokenInAmount = await Web3Service.getTokenInAmount(AppConfig.chainId, userAddress as string, usdt, 6, tokenOutAmount)
+    console.log(tokenInAmount)
+
     const rawTx = await KaikasService.signTransaction({
       type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
       to: '0x5867c40175a45b080abad03f19131cfa9569287b', // swapRouter Address
-      data: Web3Service.encodeAbi(routerABI, 'swapTokensForExactKLAY', [parseUnits('1'.toString(), 18), MaxUint256, [usdt, wklay], userAddress, MaxUint256]),
+      data: Web3Service.encodeAbi(routerABI, 'swapTokensForExactKLAY', [, MaxUint256, [usdt, wklay], userAddress, MaxUint256]),
       gas: '200000',
       from: userAddress as string,
     }).catch((e) => {

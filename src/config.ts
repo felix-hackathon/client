@@ -12,6 +12,7 @@ const AppConfig = {
   windShieldAddress: '0x5f0c11d322501De3Ca5A0EA2406429E204B9E6a6' as `0x${string}`,
   paymentGateway: '0xc08F3a36D2F0609012530011D3c14a4E1cCeC05b' as `0x${string}`,
   exchangeRouter: '0x5867c40175a45b080abad03f19131cfa9569287b' as `0x${string}`,
+  WKLAY: '0xbb3273dc4cac595afb93559c3aa07e9e6a554fc0' as `0x${string}`,
 }
 
 export default AppConfig
