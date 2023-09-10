@@ -157,7 +157,7 @@ const Buy = ({ slug }: { slug: string }) => {
     const KaikasService = (await import('@/services/kaikas')).default
     const rawTx = await KaikasService.signTransaction({
       type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
-      to: '0xC442E3959d5c84fC23BB415efcB1f3aab408Da76',
+      to: AppConfig.carAddress,
       data: Web3Service.encodeAbi(carABI, 'safeMint', values),
       gas: '710000',
       from: userAddress as string,

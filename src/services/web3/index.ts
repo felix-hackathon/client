@@ -4,6 +4,8 @@ import erc20ABI from './erc20ABI'
 import { ContractFunctionConfig, MulticallContracts, Narrow } from 'viem'
 import { NativeTokens } from '@/common/constants/web3'
 import multicallABI from './multicallABI'
+import AppConfig from '@/config'
+import carABI from './carABI'
 const routerABI = [
   {
     inputs: [
@@ -282,5 +284,69 @@ export default class Web3Service {
     const provider = await this.getProvider(chainId)
     const feeData = await provider.getFeeData()
     return feeData
+  }
+
+  static async getCarInfo({ address, chainId, id }: { chainId: number; address: `0x${string}`; id: string }) {
+    const result1 = await this.multicall({
+      chainId,
+      contracts: [
+        {
+          abi: carABI,
+          address: AppConfig.carAddress as any,
+          functionName: 'balanceOf',
+          args: ['0xc95C0EC40937aD81F34c8b0836680b7681b7bF60' as any],
+        },
+        {
+          abi: [
+            {
+              inputs: [
+                {
+                  internalType: 'address',
+                  name: 'implementation',
+                  type: 'address',
+                },
+                {
+                  internalType: 'uint256',
+                  name: 'chainId',
+                  type: 'uint256',
+                },
+                {
+                  internalType: 'address',
+                  name: 'tokenContract',
+                  type: 'address',
+                },
+                {
+                  internalType: 'uint256',
+                  name: 'tokenId',
+                  type: 'uint256',
+                },
+                {
+                  internalType: 'uint256',
+                  name: 'salt',
+                  type: 'uint256',
+                },
+              ],
+              name: 'account',
+              outputs: [
+                {
+                  internalType: 'address',
+                  name: '',
+                  type: 'address',
+                },
+              ],
+              stateMutability: 'view',
+              type: 'function',
+            },
+          ] as const,
+          address: AppConfig.registryAddress,
+          functionName: 'account',
+          args: [AppConfig.implementationAddress, chainId as unknown as bigint, address, id as unknown as bigint, BigInt(0)],
+        },
+      ],
+    })
+    const tbaAddress = result1?.[1]?.[0] || ''
+    return {
+      tbaAddress,
+    }
   }
 }

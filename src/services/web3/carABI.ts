@@ -209,6 +209,6 @@ const carABI = [
     stateMutability: 'payable',
     type: 'function',
   },
-]
+] as any
 
 export default carABI
