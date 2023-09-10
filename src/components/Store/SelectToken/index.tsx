@@ -1,5 +1,7 @@
+import useModal from '@/hooks/core/useModal'
 import useToken from '@/hooks/useToken'
 import { styled } from 'styled-components'
+import SelectTokenModal from './Modal'
 
 const Container = styled.div`
   width: Min(150px, 'fit-content');
@@ -27,13 +29,21 @@ const TokenIcon = styled.img`
 const TokenSymbol = styled.div`
   color: #fff;
 `
-const SelectToken = () => {
+const SelectToken = ({ value, onChange, chainId }: { value: string; onChange?: (v: string) => any; chainId?: number }) => {
+  const { openModal } = useModal()
   const { token } = useToken({
-    chainId: 8217,
-    address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    chainId,
+    address: value,
   })
   return (
-    <Container>
+    <Container
+      onClick={() => {
+        openModal({
+          id: 'select-token',
+          children: <SelectTokenModal value={value} onChange={onChange} chainId={chainId} />,
+        })
+      }}
+    >
       <TokenContainer>
         <TokenIcon src={token?.icon} />
         <TokenSymbol>{token?.symbol}</TokenSymbol>

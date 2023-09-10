@@ -8,6 +8,7 @@ import useAuth from '@/hooks/core/useAuth'
 import { fetcher } from '@/services/api'
 import Web3Service from '@/services/web3'
 import carABI from '@/services/web3/carABI'
+import SelectToken from '../SelectToken'
 
 const Container = styled.div`
   width: 100%;
@@ -72,9 +73,10 @@ const AmountToken = styled.div`
 const Buy = ({ slug }: { slug: string }) => {
   const { config } = useContext(CarContext)
   const { userAddress } = useAuth()
+  const [tokenAddress, setTokenAddress] = useState('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
   const { token } = useToken({
     chainId: 8217,
-    address: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    address: tokenAddress,
   })
 
   const [loading, setLoading] = useState(false)
@@ -120,7 +122,7 @@ const Buy = ({ slug }: { slug: string }) => {
     const KaikasService = (await import('@/services/kaikas')).default
     const rawTx = await KaikasService.signTransaction({
       type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
-      to: '0xf698B6C2062F91F2d1443dA345a5eBBE0DFA7d5B',
+      to: '0xC442E3959d5c84fC23BB415efcB1f3aab408Da76',
       data: Web3Service.encodeAbi(carABI, 'safeMint', [
         '1',
         [
@@ -131,7 +133,7 @@ const Buy = ({ slug }: { slug: string }) => {
         ],
         userAddress,
       ]),
-      gas: '510000',
+      gas: '710000',
       from: userAddress as string,
     }).catch((e) => {
       console.log(e)
@@ -164,15 +166,15 @@ const Buy = ({ slug }: { slug: string }) => {
           </Detail>
         ))}
       </InfoContainer>
-      {/* <InfoContainer>
+      <InfoContainer>
         <SelectPaymentCurrency>Select Payment Currency</SelectPaymentCurrency>
         <SelectTokenContainer>
           <AmountToken>
             {data?.total} {token?.symbol}
           </AmountToken>
-          <SelectToken />
+          <SelectToken value={tokenAddress} onChange={(v) => setTokenAddress(v)} chainId={8217} />
         </SelectTokenContainer>
-      </InfoContainer> */}
+      </InfoContainer>
       <PrimaryButton onClick={() => handleBuy()} loading={loading} width='300px' className='MT50 MB20'>
         Buy
       </PrimaryButton>
