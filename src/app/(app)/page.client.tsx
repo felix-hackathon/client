@@ -40,15 +40,7 @@ export default function HomeClient() {
 
   return (
     <Container>
-      <Swiper
-        autoplay
-        speed={1000}
-        style={{ width: '100%', height: '100%' }}
-        modules={[Autoplay]}
-        loop
-        onSlideChange={() => console.log('slide change')}
-        onSwiper={(swiper) => console.log(swiper)}
-      >
+      <Swiper autoplay speed={1000} style={{ width: '100%', height: '100%' }} modules={[Autoplay]} loop>
         <SwiperSlide>
           <ItemContainer>
             <Image src={carrera} alt='banner' fill style={{ objectFit: 'cover' }} />
