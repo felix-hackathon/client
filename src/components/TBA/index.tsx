@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import viewTBAIcon from '@/assets/icons/tba.svg'
+import viewTBAIcon from '@/assets/icons/garage.svg'
 import { styled } from 'styled-components'
 import { useState } from 'react'
 import Content from './Content'
