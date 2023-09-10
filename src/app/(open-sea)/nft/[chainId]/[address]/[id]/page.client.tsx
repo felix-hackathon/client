@@ -1,8 +1,6 @@
 'use client'
 import Cars from '@/components/3D/Cars'
 import Scene from '@/components/3D/Scene'
-import TBA from '@/components/TBA'
-import useNFT from '@/hooks/useNFT'
 import { styled } from 'styled-components'
 
 const Container = styled.div`
@@ -21,11 +19,6 @@ const Wrapper = styled.div`
 `
 
 const NFTDetailClient = ({ address, chainId, id }: { chainId: number; address: `0x${string}`; id: string }) => {
-  const { nft } = useNFT({
-    address,
-    chainId,
-    id,
-  })
   return (
     <Container>
       <Wrapper>
@@ -41,7 +34,7 @@ const NFTDetailClient = ({ address, chainId, id }: { chainId: number; address: `
             }}
           />
         </Scene>
-        {nft?.tbaAddress && <TBA data={nft} />}
+        {/* {nft?.tbaAddress && <TBA data={nft} />} */}
       </Wrapper>
     </Container>
   )
