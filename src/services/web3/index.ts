@@ -4,6 +4,47 @@ import erc20ABI from './erc20ABI'
 import { ContractFunctionConfig, MulticallContracts, Narrow } from 'viem'
 import { NativeTokens } from '@/common/constants/web3'
 import multicallABI from './multicallABI'
+const routerABI = [
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amountOut',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'amountInMax',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address[]',
+        name: 'path',
+        type: 'address[]',
+      },
+      {
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'deadline',
+        type: 'uint256',
+      },
+    ],
+    name: 'swapTokensForExactKLAY',
+    outputs: [
+      {
+        internalType: 'uint256[]',
+        name: 'amounts',
+        type: 'uint256[]',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+]
 
 export type MulticallOptions<TContracts extends ContractFunctionConfig[] = ContractFunctionConfig[]> = {
   chainId: number
@@ -33,6 +74,11 @@ export default class Web3Service {
   static async createERC20Contract(chainId: number, address: string) {
     const provider = await this.getProvider(chainId)
     return new Contract(address, erc20ABI, provider)
+  }
+
+  static async createRouterContract(chainId: number, address: string) {
+    const provider = await this.getProvider(chainId)
+    return new Contract(address, routerABI, provider)
   }
 
   static encodeAbi(abi: any[], functionName: string, args: any[]) {

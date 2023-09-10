@@ -1,3 +1,4 @@
+import { parseUnits, MaxUint256 } from 'ethers'
 import { Car, CarContext } from '@/app/(app)/store/[slug]/page.client'
 import BigNumber from 'bignumber.js'
 import { useContext, useMemo, useState } from 'react'
@@ -117,6 +118,39 @@ const Buy = ({ slug }: { slug: string }) => {
     return result
   }, [slug, config])
 
+  const handleSwap = async () => {
+    console.log(window.caver.klay)
+    setLoading(true)
+    // testing swap receive exact KLAYTN
+    const KaikasService = (await import('@/services/kaikas')).default
+    const usdt = '0x63b3ace91d182013fed2ebaa0a8dd9aea243e865'
+    const wklay = '0xbb3273dc4cac595afb93559c3aa07e9e6a554fc0'
+    const rawTx = await KaikasService.signTransaction({
+      type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
+      to: '0x5867c40175a45b080abad03f19131cfa9569287b', // swapRouter Address
+      data: Web3Service.encodeAbi(routerABI, 'swapTokensForExactKLAY', [parseUnits('1'.toString(), 18), MaxUint256, [usdt, wklay], userAddress, MaxUint256]),
+      gas: '200000',
+      from: userAddress as string,
+    }).catch((e) => {
+      console.log(e)
+      return null
+    })
+    console.log(rawTx, 'rawTx')
+    if (rawTx) {
+      const resTx = await fetcher({
+        url: '/1001/transaction',
+        method: 'POST',
+        body: {
+          rawTx,
+        },
+        throwError: false,
+      })
+      console.log(resTx)
+      return resTx
+    }
+    setLoading(false)
+  }
+
   const handleBuy = async () => {
     setLoading(true)
     const values = [data?.type, data?.attribute?.map((attribute) => [attribute.address, attribute.value.type]), userAddress]
@@ -167,7 +201,7 @@ const Buy = ({ slug }: { slug: string }) => {
           <SelectToken value={tokenAddress} onChange={(v) => setTokenAddress(v)} chainId={8217} />
         </SelectTokenContainer>
       </InfoContainer>
-      <PrimaryButton onClick={() => handleBuy()} loading={loading} width='300px' className='MT50 MB20'>
+      <PrimaryButton onClick={() => handleSwap()} loading={loading} width='300px' className='MT50 MB20'>
         Buy
       </PrimaryButton>
     </Container>
