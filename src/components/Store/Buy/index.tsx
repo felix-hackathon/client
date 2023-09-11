@@ -83,8 +83,6 @@ const Buy = ({ slug }: { slug: string }) => {
   })
 
   const [loading, setLoading] = useState(false)
-  
-  const tokenInAmount = await Web3Service.getTokenInAmount(AppConfig.chainId, userAddress as string, token.address, 6, data.)
 
   const data = useMemo(() => {
     const carConfig = Car[slug]
