@@ -202,7 +202,7 @@ const Buy = ({ slug }: { slug: string }) => {
           ],
           [AppConfig.carAddress, tokenOutAmount, Web3Service.encodeAbi(carABI as any, 'buy', values)],
         ]),
-        gas: '1700000',
+        gas: '2000000',
         from: userAddress as string,
       })
     }
