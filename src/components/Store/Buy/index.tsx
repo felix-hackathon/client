@@ -202,7 +202,7 @@ const Buy = ({ slug }: { slug: string }) => {
           <SelectToken value={tokenAddress} onChange={(v) => setTokenAddress(v)} chainId={AppConfig.chainId} />
         </SelectTokenContainer>
       </InfoContainer>
-      <PrimaryButton onClick={() => handleSwap()} loading={loading} width='300px' className='MT50 MB20'>
+      <PrimaryButton loading={loading} width='300px' className='MT50 MB20'>
         Buy
       </PrimaryButton>
     </Container>
