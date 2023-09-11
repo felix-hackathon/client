@@ -12,7 +12,7 @@ let config = {
   },
   images: {
     dangerouslyAllowSVG: true,
-    domains: ['tokens.1inch.io', 'i.seadn.io'],
+    domains: ['tokens.1inch.io', 'i.seadn.io', 'bafybeigrlckw4a3s5mh2thpv2armmenrnay37yeanvzt4yzflhszpqpkty.ipfs.w3s.link'],
   },
 }
 

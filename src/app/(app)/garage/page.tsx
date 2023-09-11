@@ -1,5 +1,7 @@
+import GarageClient from './page.client'
+
 const Garage = () => {
-  return <div>Garage</div>
+  return <GarageClient />
 }
 
 export default Garage
