@@ -1,4 +1,4 @@
-import { parseUnits, MaxUint256 } from 'ethers'
+import { parseUnits, MaxUint256, ethers } from 'ethers'
 import { Car, CarContext } from '@/app/(app)/store/[slug]/page.client'
 import BigNumber from 'bignumber.js'
 import { useContext, useMemo, useState } from 'react'
@@ -12,6 +12,10 @@ import carABI from '@/services/web3/carABI'
 import SelectToken from '../SelectToken'
 import AppConfig from '@/config'
 import routerABI from '@/services/web3/routerABI'
+import useTokenAmount from '@/hooks/useTokenAmount'
+import { NativeTokens } from '@/common/constants/web3'
+import gatewayABI from '@/services/web3/gatewayABI'
+import { useRouter } from 'next/navigation'
 
 const Container = styled.div`
   width: 100%;
@@ -120,53 +124,52 @@ const Buy = ({ slug }: { slug: string }) => {
     return result
   }, [slug, config])
 
-  const handleSwap = async (tokenOutAmount: string) => {
-    setLoading(true)
+  const { tokenAmount } = useTokenAmount({
+    amountOut: ethers.parseUnits(data?.total || '0', 18).toString(),
+    chainId: AppConfig.chainId,
+    tokenAddress: token?.address,
+    userAddress: userAddress as string,
+  })
 
-    // testing swap receive exact KLAYTN
-    const KaikasService = (await import('@/services/kaikas')).default
-
-    const rawTx = await KaikasService.signTransaction({
-      type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
-      to: '0x5867c40175a45b080abad03f19131cfa9569287b', // swapRouter Address
-      data: Web3Service.encodeAbi(routerABI, 'swapTokensForExactKLAY', [tokenOutAmount, MaxUint256, [token.address, AppConfig.WKLAY], userAddress, MaxUint256]),
-      gas: '200000',
-      from: userAddress as string,
-    }).catch((e) => {
-      console.log(e)
-      return null
-    })
-    if (rawTx) {
-      const resTx = await fetcher({
-        url: '/1001/transaction',
-        method: 'POST',
-        body: {
-          rawTx,
-        },
-        throwError: false,
-      })
-      console.log(resTx)
-    }
-    setLoading(false)
-  }
+  const router = useRouter()
 
   const handleBuy = async () => {
     setLoading(true)
     const values = [data?.type, data?.attribute?.map((attribute) => [attribute.address, attribute.value.type]), userAddress]
     const KaikasService = (await import('@/services/kaikas')).default
-
-    console.log(values)
-    const rawTx = await KaikasService.signTransaction({
-      type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
-      to: AppConfig.carAddress,
-      value: parseUnits('0.6'.toString(), 18).toString(),
-      data: Web3Service.encodeAbi(carABI as any, 'buy', values),
-      gas: '1400000',
-      from: userAddress as string,
-    }).catch((e) => {
-      console.log(e)
-      return null
-    })
+    let rawTx: string = ''
+    if (NativeTokens.includes(token?.address)) {
+      rawTx = await KaikasService.signTransaction({
+        type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
+        to: AppConfig.carAddress,
+        value: parseUnits(data?.total.toString(), 18).toString(),
+        data: Web3Service.encodeAbi(carABI as any, 'buy', values),
+        gas: '1400000',
+        from: userAddress as string,
+      }).catch((e) => {
+        console.log(e)
+        return null
+      })
+    } else {
+      const tokenOutAmount = ethers.parseUnits(data?.total || '0', 18).toString()
+      const tokenInAmount = await Web3Service.getTokenInAmount(AppConfig.chainId, userAddress as string, token?.address, tokenOutAmount)
+      rawTx = await KaikasService.signTransaction({
+        type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
+        to: AppConfig.paymentGateway,
+        value: '0',
+        data: Web3Service.encodeAbi(gatewayABI as any, 'execute', [
+          [token?.address, tokenInAmount, ethers.ZeroAddress, tokenOutAmount],
+          [
+            AppConfig.exchangeRouter,
+            '0',
+            Web3Service.encodeAbi(routerABI, 'swapTokensForExactKLAY', [tokenOutAmount, MaxUint256, [token.address, AppConfig.WKLAY], userAddress, MaxUint256]),
+          ],
+          [AppConfig.carAddress, tokenOutAmount, Web3Service.encodeAbi(carABI as any, 'buy', values)],
+        ]),
+        gas: '1700000',
+        from: userAddress as string,
+      })
+    }
     console.log('rawTx', rawTx)
     if (rawTx) {
       const resTx = await fetcher({
@@ -178,6 +181,9 @@ const Buy = ({ slug }: { slug: string }) => {
         throwError: false,
       })
       console.log(resTx)
+      if (resTx?.data) {
+        router.push('/garage')
+      }
     }
     setLoading(false)
   }
@@ -197,12 +203,12 @@ const Buy = ({ slug }: { slug: string }) => {
         <SelectPaymentCurrency>Select Payment Currency</SelectPaymentCurrency>
         <SelectTokenContainer>
           <AmountToken>
-            {data?.total} {token?.symbol}
+            {ethers.formatUnits(tokenAmount, token?.decimals)} {token?.symbol}
           </AmountToken>
           <SelectToken value={tokenAddress} onChange={(v) => setTokenAddress(v)} chainId={AppConfig.chainId} />
         </SelectTokenContainer>
       </InfoContainer>
-      <PrimaryButton loading={loading} width='300px' className='MT50 MB20'>
+      <PrimaryButton onClick={() => handleBuy()} loading={loading} width='300px' className='MT50 MB20'>
         Buy
       </PrimaryButton>
     </Container>

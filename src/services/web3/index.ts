@@ -1,4 +1,4 @@
-import { Contract, Interface, Network, ethers, MaxUint256, formatUnits } from 'ethers'
+import { Contract, Interface, Network, ethers, MaxUint256 } from 'ethers'
 import ConfigService from '../config'
 import erc20ABI from './erc20ABI'
 import { ContractFunctionConfig, MulticallContracts, Narrow } from 'viem'
@@ -83,13 +83,13 @@ export default class Web3Service {
     return new Contract(address, routerABI, provider)
   }
 
-  static async getTokenInAmount(chainId: number, userAddress: string, tokenInAddress: string, tokenInDecimals: number, tokenOutAmount: string) {
+  static async getTokenInAmount(chainId: number, userAddress: string, tokenInAddress: string, tokenOutAmount: string) {
     const swapRouterContract = await this.createRouterContract(chainId, AppConfig.exchangeRouter)
 
     return swapRouterContract.swapTokensForExactKLAY
       .staticCall(tokenOutAmount, MaxUint256, [tokenInAddress, AppConfig.WKLAY], userAddress, MaxUint256, { from: userAddress })
       .then((transaction) => {
-        return formatUnits(transaction[0], tokenInDecimals).toString()
+        return `${transaction[0]}`
       })
   }
 

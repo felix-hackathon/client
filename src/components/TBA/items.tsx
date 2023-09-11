@@ -16,6 +16,7 @@ const NFTContainer = styled.div`
 
 const NFTImage = styled.img`
   width: 100%;
+  aspect-ratio: 1;
   border-radius: 10px;
 `
 
