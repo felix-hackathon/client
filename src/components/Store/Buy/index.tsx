@@ -78,6 +78,8 @@ const AmountToken = styled.div`
   color: #fff;
 `
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 const Buy = ({ slug }: { slug: string }) => {
   const { config } = useContext(CarContext)
   const { userAddress } = useAuth()
@@ -218,6 +220,7 @@ const Buy = ({ slug }: { slug: string }) => {
       })
       console.log(resTx)
       if (resTx?.data) {
+        await sleep(2000)
         router.push('/garage')
       }
     }
