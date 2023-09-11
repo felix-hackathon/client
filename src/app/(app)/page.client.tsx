@@ -7,8 +7,10 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import PrimaryButton from '@/components/UI/Button/Primary'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import useAuth from '@/hooks/core/useAuth'
+import KaikasService from '@/services/kaikas'
 const Container = styled.main`
   width: 100%;
   height: calc(100% - 60px);
@@ -32,6 +34,22 @@ const ButtonContainer = styled.div`
 `
 export default function HomeClient() {
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const { isConnected, isSigned } = useAuth()
+  const handleClick = useCallback(
+    async (route: string) => {
+      setLoading(true)
+      if (!isConnected) {
+        await KaikasService.initialize()
+      } else if (isSigned) {
+        router.push(route)
+      } else {
+        await KaikasService.signIn()
+      }
+      setLoading(false)
+    },
+    [isConnected, isSigned, router]
+  )
 
   useEffect(() => {
     router.prefetch(`/store/porsche-carrare-gt`)
@@ -46,7 +64,9 @@ export default function HomeClient() {
             <Image src={carrera} alt='banner' fill style={{ objectFit: 'cover' }} />
             <Title style={{ top: '10%', left: '10%' }}>Porsche Carrare GT</Title>
             <ButtonContainer style={{ top: '20%', left: '10%' }}>
-              <PrimaryButton onClick={() => router.push('/store/porsche-carrare-gt')}>Discover now</PrimaryButton>
+              <PrimaryButton loading={loading} onClick={() => handleClick('/store/porsche-carrare-gt')}>
+                Discover now
+              </PrimaryButton>
             </ButtonContainer>
           </ItemContainer>
         </SwiperSlide>
@@ -55,7 +75,9 @@ export default function HomeClient() {
             <Image src={mcLaren} alt='banner' fill style={{ objectFit: 'cover' }} />
             <Title style={{ bottom: '20%', left: '10%' }}>MC Laren P1</Title>
             <ButtonContainer style={{ bottom: '10%', left: '10%' }}>
-              <PrimaryButton onClick={() => router.push('/store/mc-laren-p1')}>Discover now</PrimaryButton>
+              <PrimaryButton loading={loading} onClick={() => handleClick('/store/mc-laren-p1')}>
+                Discover now
+              </PrimaryButton>
             </ButtonContainer>
           </ItemContainer>
         </SwiperSlide>
