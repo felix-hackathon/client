@@ -16,6 +16,7 @@ import useTokenAmount from '@/hooks/useTokenAmount'
 import { NativeTokens } from '@/common/constants/web3'
 import gatewayABI from '@/services/web3/gatewayABI'
 import { useRouter } from 'next/navigation'
+import erc20ABI from '@/services/web3/erc20ABI'
 
 const Container = styled.div`
   width: 100%;
@@ -158,6 +159,36 @@ const Buy = ({ slug }: { slug: string }) => {
         chainId: AppConfig.chainId,
         path: [token.address, AppConfig.WKLAY],
       })
+
+      const allowance = await Web3Service.getAllowance({
+        chainId: AppConfig.chainId,
+        spender: AppConfig.paymentGateway,
+        tokenAddress: token?.address,
+        userAddress: userAddress as any,
+      })
+
+      if (BigNumber(allowance || '0').lt(BigNumber(tokenInAmount || '0'))) {
+        const rawTxApprove = await KaikasService.signTransaction({
+          type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
+          to: token?.address,
+          data: Web3Service.encodeAbi(erc20ABI as any, 'approve', [AppConfig.paymentGateway, tokenInAmount || '0']),
+          gas: '100000',
+          from: userAddress as string,
+        }).catch((e) => {
+          console.log(e)
+          return null
+        })
+        console.log('rawTxApprove', rawTxApprove)
+        const resApprove = await fetcher({
+          url: '/1001/transaction',
+          method: 'POST',
+          body: {
+            rawTx: rawTxApprove,
+          },
+          throwError: false,
+        })
+        console.log(resApprove, 'resApprove')
+      }
       rawTx = await KaikasService.signTransaction({
         type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
         to: AppConfig.paymentGateway,

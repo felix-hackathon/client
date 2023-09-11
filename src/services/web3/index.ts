@@ -272,4 +272,18 @@ export default class Web3Service {
     }
     return null
   }
+  static async getAllowance({ tokenAddress, userAddress, spender, chainId }: { tokenAddress: string; userAddress: string; spender: string; chainId: number }) {
+    const data = await this.multicall({
+      chainId,
+      contracts: [
+        {
+          abi: erc20ABI,
+          address: tokenAddress as any,
+          functionName: 'allowance',
+          args: [userAddress as any, spender as any],
+        },
+      ],
+    })
+    return `${data?.[0]?.[0]}` || '0'
+  }
 }
