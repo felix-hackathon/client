@@ -86,10 +86,9 @@ export default class Web3Service {
   static async getTokenInAmount(chainId: number, userAddress: string, tokenInAddress: string, tokenInDecimals: number, tokenOutAmount: string) {
     const swapRouterContract = await this.createRouterContract(chainId, AppConfig.exchangeRouter)
 
-    swapRouterContract.swapTokensForExactKLAY
+    return swapRouterContract.swapTokensForExactKLAY
       .staticCall(tokenOutAmount, MaxUint256, [tokenInAddress, AppConfig.WKLAY], userAddress, MaxUint256, { from: userAddress })
       .then((transaction) => {
-        console.log('Result', formatUnits(transaction[0], tokenInDecimals).toString())
         return formatUnits(transaction[0], tokenInDecimals).toString()
       })
   }
