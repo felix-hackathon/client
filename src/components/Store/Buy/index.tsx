@@ -78,7 +78,7 @@ const Buy = ({ slug }: { slug: string }) => {
   const { userAddress } = useAuth()
   const [tokenAddress, setTokenAddress] = useState('0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
   const { token } = useToken({
-    chainId: 8217,
+    chainId: AppConfig.chainId,
     address: tokenAddress,
   })
 
@@ -205,7 +205,7 @@ const Buy = ({ slug }: { slug: string }) => {
           <AmountToken>
             {data?.total} {token?.symbol}
           </AmountToken>
-          <SelectToken value={tokenAddress} onChange={(v) => setTokenAddress(v)} chainId={8217} />
+          <SelectToken value={tokenAddress} onChange={(v) => setTokenAddress(v)} chainId={AppConfig.chainId} />
         </SelectTokenContainer>
       </InfoContainer>
       <PrimaryButton onClick={() => handleBuy()} loading={loading} width='300px' className='MT50 MB20'>
