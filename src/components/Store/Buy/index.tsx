@@ -200,7 +200,13 @@ const Buy = ({ slug }: { slug: string }) => {
           [
             AppConfig.exchangeRouter,
             '0',
-            Web3Service.encodeAbi(routerABI, 'swapTokensForExactKLAY', [tokenOutAmount, MaxUint256, [token.address, AppConfig.WKLAY], userAddress, MaxUint256]),
+            Web3Service.encodeAbi(routerABI, 'swapTokensForExactKLAY', [
+              tokenOutAmount,
+              MaxUint256,
+              [token.address, AppConfig.WKLAY],
+              AppConfig.paymentGateway,
+              MaxUint256,
+            ]),
           ],
           [AppConfig.carAddress, tokenOutAmount, Web3Service.encodeAbi(carABI as any, 'buy', values)],
         ]),
