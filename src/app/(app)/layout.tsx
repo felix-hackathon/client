@@ -1,11 +1,11 @@
 import LayoutClient from '../(app)/layout.client'
 import { Metadata } from 'next'
 export const metadata: Metadata = {
-  title: 'Firefly - NFT Virtual Shopping',
+  title: 'Firefly x Klaytn Foundation',
   manifest: '/manifest.json',
   icons: ['/favicon.ico'],
   themeColor: '#ffffff',
-  description: 'NFT Store',
+  description: 'NFT Virtual Shopping',
   viewport: {
     width: 'device-width',
     userScalable: true,
