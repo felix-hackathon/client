@@ -181,25 +181,25 @@ export const Car: Record<string, ICar> = {
           },
         ],
       },
-      {
-        key: 'windshield',
-        address: AppConfig.windShieldAddress,
-        name: 'Wind Shield',
-        options: [
-          {
-            key: 'normal',
-            name: 'Normal',
-            price: '0.1',
-            type: '1',
-          },
-          {
-            key: 'black',
-            name: 'Black',
-            price: '0.1',
-            type: '2',
-          },
-        ],
-      },
+      // {
+      //   key: 'windshield',
+      //   address: AppConfig.windShieldAddress,
+      //   name: 'Wind Shield',
+      //   options: [
+      //     {
+      //       key: 'normal',
+      //       name: 'Normal',
+      //       price: '0.1',
+      //       type: '1',
+      //     },
+      //     {
+      //       key: 'black',
+      //       name: 'Black',
+      //       price: '0.1',
+      //       type: '2',
+      //     },
+      //   ],
+      // },
     ],
   },
   'porsche-carrare-gt': {
