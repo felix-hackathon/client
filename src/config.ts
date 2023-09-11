@@ -13,6 +13,8 @@ const AppConfig = {
   paymentGateway: '0xD1a4d179A42523849D5710538B39d3FbBC1d81af' as `0x${string}`,
   exchangeRouter: '0x5867c40175a45b080abad03f19131cfa9569287b' as `0x${string}`,
   WKLAY: '0xbb3273dc4cac595afb93559c3aa07e9e6a554fc0' as `0x${string}`,
+  usdtPair: '0xf1c961f001bd3f8278d4ec798b593f81c4e9851d' as `0x${string}`,
+  usdcPair: '0x379dc1434af86a1a3800915caa84bc422ae490ca' as `0x${string}`,
 }
 
 export default AppConfig
