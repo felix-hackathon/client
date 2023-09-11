@@ -83,6 +83,8 @@ const Buy = ({ slug }: { slug: string }) => {
   })
 
   const [loading, setLoading] = useState(false)
+  
+  const tokenInAmount = await Web3Service.getTokenInAmount(AppConfig.chainId, userAddress as string, token.address, 6, data.)
 
   const data = useMemo(() => {
     const carConfig = Car[slug]
@@ -120,29 +122,22 @@ const Buy = ({ slug }: { slug: string }) => {
     return result
   }, [slug, config])
 
-  const handleSwap = async () => {
-    console.log(window.caver.klay)
+  const handleSwap = async (tokenOutAmount: string) => {
     setLoading(true)
 
     // testing swap receive exact KLAYTN
     const KaikasService = (await import('@/services/kaikas')).default
-    const usdt = '0x63b3ace91d182013fed2ebaa0a8dd9aea243e865'
-    const wklay = '0xbb3273dc4cac595afb93559c3aa07e9e6a554fc0'
-    const tokenOutAmount = parseUnits('1'.toString(), 18).toString()
-    const tokenInAmount = await Web3Service.getTokenInAmount(AppConfig.chainId, userAddress as string, usdt, 6, tokenOutAmount)
-    console.log(tokenInAmount)
 
     const rawTx = await KaikasService.signTransaction({
       type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
       to: '0x5867c40175a45b080abad03f19131cfa9569287b', // swapRouter Address
-      data: Web3Service.encodeAbi(routerABI, 'swapTokensForExactKLAY', [, MaxUint256, [usdt, wklay], userAddress, MaxUint256]),
+      data: Web3Service.encodeAbi(routerABI, 'swapTokensForExactKLAY', [tokenOutAmount, MaxUint256, [token.address, AppConfig.WKLAY], userAddress, MaxUint256]),
       gas: '200000',
       from: userAddress as string,
     }).catch((e) => {
       console.log(e)
       return null
     })
-    console.log(rawTx, 'rawTx')
     if (rawTx) {
       const resTx = await fetcher({
         url: '/1001/transaction',
@@ -161,11 +156,12 @@ const Buy = ({ slug }: { slug: string }) => {
     setLoading(true)
     const values = [data?.type, data?.attribute?.map((attribute) => [attribute.address, attribute.value.type]), userAddress]
     const KaikasService = (await import('@/services/kaikas')).default
+
     console.log(values)
     const rawTx = await KaikasService.signTransaction({
       type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
       to: AppConfig.carAddress,
-      value: parseUnits('0.7'.toString(), 18).toString(),
+      value: parseUnits('0.6'.toString(), 18).toString(),
       data: Web3Service.encodeAbi(carABI as any, 'buy', values),
       gas: '1400000',
       from: userAddress as string,
@@ -208,7 +204,7 @@ const Buy = ({ slug }: { slug: string }) => {
           <SelectToken value={tokenAddress} onChange={(v) => setTokenAddress(v)} chainId={AppConfig.chainId} />
         </SelectTokenContainer>
       </InfoContainer>
-      <PrimaryButton onClick={() => handleBuy()} loading={loading} width='300px' className='MT50 MB20'>
+      <PrimaryButton onClick={() => handleSwap()} loading={loading} width='300px' className='MT50 MB20'>
         Buy
       </PrimaryButton>
     </Container>
