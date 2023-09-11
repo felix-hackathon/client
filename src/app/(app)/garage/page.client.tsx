@@ -59,6 +59,12 @@ const NFTId = styled.h4`
   font-size: 12px;
 `
 
+const NoData = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`
+
 export const viewNFTInOpensea = (chainId: any, address: string, id: string) => {
   const OPENSEA_CHAIN: { [k: string]: string } = {
     1: 'ethereum',
@@ -93,15 +99,19 @@ const GarageClient = () => {
       <Wrapper>
         <Title>My Garage</Title>
         <ListContainer>
-          {nfts?.map((nft: any) => (
-            <a key={nft?._id} href={viewNFTInOpensea(nft?.chainId, nft?.nftAddress, nft?.nftId) as string} target='_blank'>
-              <NFTContainer>
-                <NFTImage src={nft?.image} alt='nft' />
-                <NFTName>{nft?.name}</NFTName>
-                <NFTId>#{nft?.nftId}</NFTId>
-              </NFTContainer>
-            </a>
-          ))}
+          {nfts?.length === 0 ? (
+            <NoData>No Data</NoData>
+          ) : (
+            nfts?.map((nft: any) => (
+              <a key={nft?._id} href={viewNFTInOpensea(nft?.chainId, nft?.nftAddress, nft?.nftId) as string} target='_blank'>
+                <NFTContainer>
+                  <NFTImage src={nft?.image} alt='nft' />
+                  <NFTName>{nft?.name}</NFTName>
+                  <NFTId>#{nft?.nftId}</NFTId>
+                </NFTContainer>
+              </a>
+            ))
+          )}
         </ListContainer>
       </Wrapper>
     </Container>
