@@ -5,47 +5,7 @@ import { ContractFunctionConfig, MulticallContracts, Narrow } from 'viem'
 import { NativeTokens } from '@/common/constants/web3'
 import multicallABI from './multicallABI'
 import AppConfig from '@/config'
-const routerABI = [
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'amountOut',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'amountInMax',
-        type: 'uint256',
-      },
-      {
-        internalType: 'address[]',
-        name: 'path',
-        type: 'address[]',
-      },
-      {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'deadline',
-        type: 'uint256',
-      },
-    ],
-    name: 'swapTokensForExactKLAY',
-    outputs: [
-      {
-        internalType: 'uint256[]',
-        name: 'amounts',
-        type: 'uint256[]',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-]
+import routerABI from './routerABI'
 
 export type MulticallOptions<TContracts extends ContractFunctionConfig[] = ContractFunctionConfig[]> = {
   chainId: number
@@ -293,5 +253,23 @@ export default class Web3Service {
     const provider = await this.getProvider(chainId)
     const feeData = await provider.getFeeData()
     return feeData
+  }
+
+  static async getAmountsIn({ path, chainId, amountOut }: { path: string[]; chainId: number; amountOut: string }) {
+    const data = await this.multicall({
+      chainId,
+      contracts: [
+        {
+          abi: routerABI,
+          address: AppConfig.exchangeRouter,
+          functionName: 'getAmountsIn',
+          args: [amountOut, path],
+        },
+      ],
+    })
+    if (data?.[0]?.[0]?.[0]) {
+      return `${data?.[0]?.[0]?.[0]}`
+    }
+    return null
   }
 }

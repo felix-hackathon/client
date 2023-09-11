@@ -152,7 +152,12 @@ const Buy = ({ slug }: { slug: string }) => {
       })
     } else {
       const tokenOutAmount = ethers.parseUnits(data?.total || '0', 18).toString()
-      const tokenInAmount = await Web3Service.getTokenInAmount(AppConfig.chainId, userAddress as string, token?.address, tokenOutAmount)
+      // const tokenInAmount = await Web3Service.getTokenInAmount(AppConfig.chainId, userAddress as string, token?.address, tokenOutAmount)
+      const tokenInAmount = await Web3Service.getAmountsIn({
+        amountOut: tokenOutAmount,
+        chainId: AppConfig.chainId,
+        path: [token.address, AppConfig.WKLAY],
+      })
       rawTx = await KaikasService.signTransaction({
         type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
         to: AppConfig.paymentGateway,
