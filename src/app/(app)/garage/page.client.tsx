@@ -59,6 +59,28 @@ const NFTId = styled.h4`
   font-size: 12px;
 `
 
+export const viewNFTInOpensea = (chainId: any, address: string, id: string) => {
+  const OPENSEA_CHAIN: { [k: string]: string } = {
+    1: 'ethereum',
+    5: 'goerli',
+    56: 'bsc',
+    97: 'bsc-testnet',
+    137: 'matic',
+    8217: 'klaytn',
+    1001: 'baobab',
+    80001: 'mumbai',
+    42161: 'arbitrum',
+    421613: 'arbitrum-goerli',
+    43114: 'avalanche',
+    43113: 'avalanche-fuji',
+  }
+  if ([5, 97, 80001, 43113, 1001, 421613].includes(parseInt(chainId))) {
+    return `https://testnets.opensea.io/assets/${OPENSEA_CHAIN[chainId]}/${address}/${id}`
+    return
+  }
+  return `https://opensea.io/assets/${OPENSEA_CHAIN[chainId]}/${address}/${id}`
+}
+
 const GarageClient = () => {
   const { userAddress } = useAuth()
   const { nfts } = useNFTs({
@@ -66,18 +88,19 @@ const GarageClient = () => {
     owner: userAddress as string,
   })
 
-  console.log(nfts)
   return (
     <Container>
       <Wrapper>
         <Title>My Garage</Title>
         <ListContainer>
           {nfts?.map((nft: any) => (
-            <NFTContainer key={nft?._id}>
-              <NFTImage src={nft?.image} alt='nft' />
-              <NFTName>{nft?.name}</NFTName>
-              <NFTId>#{nft?.nftId}</NFTId>
-            </NFTContainer>
+            <a key={nft?._id} href={viewNFTInOpensea(nft?.chainId, nft?.nftAddress, nft?.nftId) as string} target='_blank'>
+              <NFTContainer>
+                <NFTImage src={nft?.image} alt='nft' />
+                <NFTName>{nft?.name}</NFTName>
+                <NFTId>#{nft?.nftId}</NFTId>
+              </NFTContainer>
+            </a>
           ))}
         </ListContainer>
       </Wrapper>
