@@ -3,6 +3,7 @@ import { css, styled } from 'styled-components'
 import Image from 'next/image'
 import Tabs from '../Tabs'
 import { ellipsisAddress } from '@/common/functions'
+import Items from './items'
 
 const Container = styled.div<{ $mounted: boolean }>`
   background-color: #f2f2f2;
@@ -62,6 +63,15 @@ const TBAAddress = styled.div<{ $copy?: boolean }>`
   border: 1px solid #e0e0e0;
 `
 
+export const copyToClipboard = (text: string) => {
+  const tmp = document.createElement('input')
+  tmp.value = text
+  document.body.appendChild(tmp)
+  tmp.select()
+  document.execCommand('copy')
+  tmp.remove()
+}
+
 const Content = ({ data, onClose }: { data?: any; onClose?: any }) => {
   const [mounted, setMounted] = useState(false)
   useEffect(() => {
@@ -81,6 +91,7 @@ const Content = ({ data, onClose }: { data?: any; onClose?: any }) => {
           $copy={copy}
           onClick={() => {
             if (!copy) {
+              copyToClipboard(data?.tbaAddress)
               setCopy(true)
               setTimeout(() => setCopy(false), 1000)
             }
@@ -104,7 +115,7 @@ const Content = ({ data, onClose }: { data?: any; onClose?: any }) => {
           {
             key: 'accessory',
             label: 'Accessory',
-            component: <></>,
+            component: <Items data={data} />,
           },
         ]}
       />
