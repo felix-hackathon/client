@@ -65,7 +65,8 @@ const Header = () => {
           <LinkContainer>
             {/* <ActiveLink href='/'>Marketplace</ActiveLink> */}
             <ActiveLink href='/'>Home</ActiveLink>
-            <ActiveLink href='/garage'>Garage</ActiveLink>
+            <ActiveLink href='/gallery'>Gallery</ActiveLink>
+            <ActiveLink href='/garage'>My Garage</ActiveLink>
           </LinkContainer>
           <Side $right>
             <ButtonConnect />

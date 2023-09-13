@@ -1,6 +1,5 @@
 'use client'
 import AppConfig from '@/config'
-import useAuth from '@/hooks/core/useAuth'
 import useNFTs from '@/hooks/useNFTs'
 import { styled } from 'styled-components'
 
@@ -36,7 +35,7 @@ const ListContainer = styled.div`
   margin-top: 20px;
 `
 
-const NFTContainer = styled.a`
+const NFTContainer = styled.div`
   width: calc(100% / 5 - (20px * 4 / 5));
   position: relative;
   border-radius: 10px;
@@ -88,23 +87,21 @@ export const viewNFTInOpensea = (chainId: any, address: string, id: string) => {
   return `https://opensea.io/assets/${OPENSEA_CHAIN[chainId]}/${address}/${id}`
 }
 
-const GarageClient = () => {
-  const { userAddress } = useAuth()
+const GalleryClient = () => {
   const { nfts } = useNFTs({
     chainId: AppConfig.chainId,
-    owner: userAddress as string,
   })
 
   return (
     <Container>
       <Wrapper>
-        <Title>My Garage</Title>
+        <Title>Gallery</Title>
         <ListContainer>
           {nfts?.length === 0 ? (
             <NoData>No Data</NoData>
           ) : (
             nfts?.map((nft: any) => (
-              <NFTContainer key={nft?._id} href={viewNFTInOpensea(nft?.chainId, nft?.nftAddress, nft?.nftId) as string} target='_blank'>
+              <NFTContainer key={nft?._id}>
                 <NFTImage src={nft?.image} alt='nft' />
                 <NFTName>{nft?.name}</NFTName>
                 <NFTId>#{nft?.nftId}</NFTId>
@@ -117,4 +114,4 @@ const GarageClient = () => {
   )
 }
 
-export default GarageClient
+export default GalleryClient

@@ -20,6 +20,26 @@ const Container = styled.div`
   scrollbar-width: none; */
 `
 
+const NotSupported = styled.div`
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: flex;
+    position: fixed;
+    z-index: 1000;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: black;
+    font-size: 30px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+`
+
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   useKaikasReconnect()
   useWatchNetwork()
@@ -38,6 +58,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
     <Container>
       <Header />
       {children}
+      <NotSupported>This device is not supported </NotSupported>
     </Container>
   )
 }

@@ -1,7 +1,7 @@
 import LayoutClient from '../(app)/layout.client'
 import { Metadata } from 'next'
 export const metadata: Metadata = {
-  title: 'Firefly x Klaytn Foundation',
+  title: 'FireFly x Klaytn Foundation',
   manifest: '/manifest.json',
   icons: ['/favicon.ico'],
   themeColor: '#ffffff',
