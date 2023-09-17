@@ -305,4 +305,31 @@ export default class KaikasService {
       return null
     }
   }
+
+  static async signTypedData({ from, domain, message, primaryType, types }: { from: string; domain: any; message: any; primaryType: string; types: any }) {
+    const msgParams = JSON.stringify({
+      domain,
+      message,
+      primaryType,
+      types,
+    })
+    var params = [from, msgParams]
+    var method = 'eth_signTypedData_v4'
+
+    return new Promise((resolve: any, reject: any) => {
+      window.klaytn.sendAsync(
+        {
+          method,
+          params,
+          from: from,
+        },
+        (error: any, result: any) => {
+          if (error) {
+            return reject(error?.message)
+          }
+          return resolve(result?.result)
+        }
+      )
+    })
+  }
 }

@@ -1,5 +1,7 @@
 'use client'
+import NFTDetailModal from '@/components/NFTDetailModal'
 import AppConfig from '@/config'
+import useModal from '@/hooks/core/useModal'
 import useNFTs from '@/hooks/useNFTs'
 import { styled } from 'styled-components'
 
@@ -36,7 +38,7 @@ const ListContainer = styled.div`
 `
 
 const NFTContainer = styled.div`
-  width: calc(100% / 5 - (20px * 4 / 5));
+  width: calc(100% / 4 - (20px * 3 / 4));
   position: relative;
   border-radius: 10px;
   background-color: #fff;
@@ -65,6 +67,14 @@ const NoData = styled.div`
   justify-content: center;
 `
 
+const ButtonContainer = styled.div`
+  width: 100%;
+  padding: 0px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`
+
 export const viewNFTInOpensea = (chainId: any, address: string, id: string) => {
   const OPENSEA_CHAIN: { [k: string]: string } = {
     1: 'ethereum',
@@ -88,6 +98,7 @@ export const viewNFTInOpensea = (chainId: any, address: string, id: string) => {
 }
 
 const GalleryClient = () => {
+  const { openModal } = useModal()
   const { nfts } = useNFTs({
     chainId: AppConfig.chainId,
   })
@@ -101,7 +112,15 @@ const GalleryClient = () => {
             <NoData>No Data</NoData>
           ) : (
             nfts?.map((nft: any) => (
-              <NFTContainer key={nft?._id}>
+              <NFTContainer
+                onClick={() =>
+                  openModal({
+                    children: <NFTDetailModal nft={nft} />,
+                    id: 'nft-detail',
+                  })
+                }
+                key={nft?._id}
+              >
                 <NFTImage src={nft?.image} alt='nft' />
                 <NFTName>{nft?.name}</NFTName>
                 <NFTId>#{nft?.nftId}</NFTId>

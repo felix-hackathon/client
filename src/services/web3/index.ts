@@ -6,6 +6,7 @@ import { NativeTokens } from '@/common/constants/web3'
 import multicallABI from './multicallABI'
 import AppConfig from '@/config'
 import routerABI from './routerABI'
+import carABI from './carABI'
 
 export type MulticallOptions<TContracts extends ContractFunctionConfig[] = ContractFunctionConfig[]> = {
   chainId: number
@@ -185,6 +186,12 @@ export default class Web3Service {
       const contractToken = await this.createERC20Contract(chainId, tokenAddress)
       return contractToken.balanceOf(userAddress)
     }
+  }
+
+  static async getNoncesNFT({ chainId, nftAddress, tokenId }: { tokenId: string; nftAddress: string; chainId: number }) {
+    const provider = await this.getProvider(chainId)
+    const contract = new Contract(nftAddress, carABI, provider)
+    return contract.nonces(tokenId)
   }
 
   static async getBalances({ chainId, tokenAddresses, userAddress }: { userAddress: string; tokenAddresses: string[]; chainId: number }) {

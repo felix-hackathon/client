@@ -11,10 +11,12 @@ const defaultValue: {
   modals: IModal[]
   open: (modal: IModal) => void
   close: (options?: CloseOptions) => Promise<void> | void
+  closeAll: () => Promise<void> | void
 } = {
   modals: [],
   open: (_: IModal) => {},
   close: (_?: CloseOptions) => {},
+  closeAll: () => {},
 }
 export const ModalContext = createContext(defaultValue)
 const ModalProvider = ({ children }: { children: React.ReactNode }) => {
@@ -46,6 +48,9 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
     },
     [modals]
   )
+  const closeAll = useCallback(async () => {
+    setModals([])
+  }, [])
 
   return (
     <ModalContext.Provider
@@ -53,6 +58,7 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
         modals,
         close,
         open,
+        closeAll,
       }}
     >
       {children}

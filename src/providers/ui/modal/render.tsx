@@ -6,8 +6,8 @@ const ModalRenderer = () => {
   const configs = useContext(ModalContext)
   return (
     <>
-      {configs.modals.map((modal) => (
-        <Modal key={modal.id} modal={modal} />
+      {configs.modals.map((modal, index) => (
+        <Modal key={modal.id} modal={modal} $bg={index === configs.modals.length - 1} />
       ))}
     </>
   )

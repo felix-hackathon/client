@@ -14,3 +14,5 @@ export const ellipsisAddress = (address: string, prefixLength = 4, suffixLength 
 export const promiseAll = async (promise: any[]) => {
   return await Promise.all(promise)
 }
+
+export const sleep = async (ms: number) => new Promise((res) => setTimeout(res, ms))
