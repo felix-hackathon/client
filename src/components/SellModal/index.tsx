@@ -154,7 +154,7 @@ const SellModal = ({ nft }: { nft: any }) => {
       },
       message: {
         signer: userAddress,
-        collection: '0xc95C0EC40937aD81F34c8b0836680b7681b7bF60',
+        collection: nft?.nftAddress,
         price: ethers.parseUnits(price, 18).toString(),
         tokenId: nft?.nftId,
         currency: ethers.ZeroAddress,
