@@ -248,7 +248,7 @@ const NFTDetailModal = ({ nft }: { nft: any }) => {
                 <PrimaryButton
                   onClick={() =>
                     openModal({
-                      children: <SellModal nft={nft} owner={userAddress} quoteType={1} />,
+                      children: <SellModal nft={nft} quoteType={1} />,
                       id: 'sell-modal',
                     })
                   }
@@ -281,7 +281,7 @@ const NFTDetailModal = ({ nft }: { nft: any }) => {
                     <PrimaryButton
                       onClick={() =>
                         openModal({
-                          children: <SellModal nft={nft} owner={userAddress} quoteType={0} />,
+                          children: <SellModal nft={nft} quoteType={0} />,
                           id: 'sell-modal',
                         })
                       }

@@ -85,7 +85,7 @@ const Input = styled.input`
   }
 `
 
-const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | null; quoteType: number }) => {
+const RequestModal = ({ nft, quoteType }: { nft: any; quoteType: number }) => {
   const { closeModal, closeAll } = useModal()
   const { userAddress } = useAuth()
   const [loading, setLoading] = useState(false)
@@ -177,7 +177,7 @@ const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | nul
         tokenId: nft?.nftId,
         currency: ethers.ZeroAddress,
         price: ethers.parseUnits(price, 18).toString(),
-        signer: owner,
+        signer: nft?.owner,
         startTime: 0,
         endTime: ethers.MaxUint256.toString(),
         // TODO:
@@ -301,7 +301,7 @@ const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | nul
         tokenId: nft?.nftId,
         currency: ethers.ZeroAddress,
         price: ethers.parseUnits(price, 18).toString(),
-        signer: owner,
+        signer: nft?.owner,
         startTime: 0,
         endTime: ethers.MaxUint256.toString(),
         assets: [AppConfig.rimAddress, AppConfig.brakeDiskAddress],
