@@ -103,7 +103,7 @@ const NFTDetailModal = ({ nft }: { nft: any }) => {
         <PrimaryButton
           onClick={() =>
             openModal({
-              children: <SellModal nft={nft} />,
+              children: <SellModal nft={nft} owner={userAddress} quoteType={0} />,
               id: 'sell-modal',
             })
           }
@@ -115,8 +115,18 @@ const NFTDetailModal = ({ nft }: { nft: any }) => {
         </PrimaryButton>
       )}
       {nft?.owner !== userAddress?.toLowerCase() && (
-        <PrimaryButton height='40px' className='MT30 MB10' width='70%'>
-          Buy
+        <PrimaryButton
+          onClick={() =>
+            openModal({
+              children: <SellModal nft={nft} owner={'0xOwnerOf(token)'} quoteType={1} />,
+              id: 'sell-modal',
+            })
+          }
+          height='40px'
+          className='MT30 MB10'
+          width='70%'
+        >
+          Offer
         </PrimaryButton>
       )}
     </Container>

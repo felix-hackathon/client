@@ -79,7 +79,7 @@ const Input = styled.input`
   }
 `
 
-const SellModal = ({ nft }: { nft: any }) => {
+const SellModal = ({ nft, owner, quoteType }: { nft: any; owner: string | null; quoteType: number }) => {
   const { closeModal } = useModal()
   const { userAddress } = useAuth()
   const [loading, setLoading] = useState(false)
@@ -130,14 +130,14 @@ const SellModal = ({ nft }: { nft: any }) => {
         ],
       },
       message: {
-        quoteType: 0,
+        quoteType,
         orderNonce: '1',
         collectionType: '1',
         collection: nft?.nftAddress,
         tokenId: nft?.nftId,
         currency: ethers.ZeroAddress,
         price: ethers.parseUnits(price, 18).toString(),
-        signer: userAddress,
+        signer: owner,
         startTime: 0,
         endTime: ethers.MaxUint256.toString(),
         // TODO:
@@ -174,7 +174,7 @@ const SellModal = ({ nft }: { nft: any }) => {
         width='70%'
         className='MT20 MB10'
       >
-        Sell
+        {quoteType === 0 ? 'Sell' : 'Offer'}
       </PrimaryButton>
     </Container>
   )
