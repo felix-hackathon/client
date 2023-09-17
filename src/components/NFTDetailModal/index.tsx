@@ -282,7 +282,7 @@ const NFTDetailModal = ({ nft }: { nft: any }) => {
                       onClick={() =>
                         openModal({
                           children: <SellModal nft={nft} quoteType={0} />,
-                          id: 'sell-modal',
+                          id: 'offer-modal',
                         })
                       }
                       height='40px'
