@@ -13,6 +13,7 @@ import { mutate } from 'swr'
 import Web3Service from '@/services/web3'
 import carABI from '@/services/web3/carABI'
 import wrapABI from '@/services/web3/wrapABI'
+import { sleep } from '@/common/functions'
 
 const Container = styled.div`
   width: 380px;
@@ -240,6 +241,7 @@ const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | nul
         throwError: false,
       })
       console.log('resWrap', resWrap)
+      await sleep(1000)
     }
 
     if (BigInt(allowance) < BigInt(priceWei)) {
@@ -264,6 +266,7 @@ const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | nul
         throwError: false,
       })
       console.log('resApprove', resApprove)
+      await sleep(1000)
     }
     const sign = await KaikasService.signTypedData({
       from: userAddress || '',
