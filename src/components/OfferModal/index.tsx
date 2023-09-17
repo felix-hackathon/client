@@ -14,6 +14,7 @@ import { mutate } from 'swr'
 import { useRouter } from 'next/navigation'
 import { ellipsisAddress } from '@/common/functions'
 import Loading from '../UI/Loading'
+import carABI from '@/services/web3/carABI'
 
 const Container = styled.div`
   width: 380px;
@@ -110,9 +111,42 @@ const OfferModal = ({ nft }: { nft: any }) => {
   const { userAddress } = useAuth()
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  console.log(nft?.offer)
+
   const handleAcceptOffer = async (offer: any) => {
     setLoading(true)
+    const KaikasService = (await import('@/services/kaikas')).default
+    const isApproveAll = await Web3Service.isApprovedForAll({
+      chainId: AppConfig.chainId,
+      nftAddress: nft?.nftAddress,
+      spenderAddress: AppConfig.fireflyExchange,
+      userAddress: userAddress || '',
+    })
+
+    console.log(isApproveAll, 'isApproveAll')
+    if (!isApproveAll) {
+      const rawTxApprove = await KaikasService.signTransaction({
+        type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
+        to: AppConfig.fireflyExchange,
+        value: nft?.market?.priceWei,
+        data: Web3Service.encodeAbi(carABI as any, 'setApprovalForAll', [AppConfig.fireflyExchange, true]),
+        gas: '100000',
+        from: userAddress as string,
+      }).catch((e) => {
+        console.log(e)
+        return null
+      })
+
+      const resApprove = await fetcher({
+        url: '/1001/transaction',
+        method: 'POST',
+        body: {
+          rawTx: rawTxApprove,
+        },
+        throwError: false,
+      })
+      console.log(resApprove)
+    }
+
     const quoteType = '1' //(0 = BID, 1 = ASK)
     const orderNonce = '1' // unique number
     const collectionType = '1' // (0 = 721, 1 = 6551)
@@ -148,7 +182,6 @@ const OfferModal = ({ nft }: { nft: any }) => {
 
     const taker: any[] = [recipient, takerSignature]
     const order = [maker, taker]
-    const KaikasService = (await import('@/services/kaikas')).default
     let rawTx: string = ''
     rawTx = await KaikasService.signTransaction({
       type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
