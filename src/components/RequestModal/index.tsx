@@ -8,6 +8,10 @@ import KaikasService from '@/services/kaikas'
 import useAuth from '@/hooks/core/useAuth'
 import { ethers } from 'ethers'
 import AppConfig from '@/config'
+import { fetcher } from '@/services/api'
+import { mutate } from 'swr'
+import Web3Service from '@/services/web3'
+import carABI from '@/services/web3/carABI'
 
 const Container = styled.div`
   width: 380px;
@@ -79,11 +83,12 @@ const Input = styled.input`
   }
 `
 
-const SellModal = ({ nft, owner, quoteType }: { nft: any; owner: string | null; quoteType: number }) => {
-  const { closeModal } = useModal()
+const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | null; quoteType: number }) => {
+  const { closeModal, closeAll } = useModal()
   const { userAddress } = useAuth()
   const [loading, setLoading] = useState(false)
   const [price, setPrice] = useState('')
+
   const handleSell = async () => {
     setLoading(true)
 
@@ -104,12 +109,45 @@ const SellModal = ({ nft, owner, quoteType }: { nft: any; owner: string | null; 
      * @param makerSignature makerSignature (required);
      */
 
+    const isApproveAll = await Web3Service.isApprovedForAll({
+      chainId: AppConfig.chainId,
+      nftAddress: nft?.nftAddress,
+      spenderAddress: AppConfig.fireflyExchange,
+      userAddress: userAddress || '',
+    })
+
+    console.log(isApproveAll, 'isApproveAll')
+
+    if (!isApproveAll) {
+      const rawTxApprove = await KaikasService.signTransaction({
+        type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
+        to: AppConfig.fireflyExchange,
+        value: nft?.market?.priceWei,
+        data: Web3Service.encodeAbi(carABI as any, 'setApprovalForAll', [AppConfig.fireflyExchange, true]),
+        gas: '100000',
+        from: userAddress as string,
+      }).catch((e) => {
+        console.log(e)
+        return null
+      })
+
+      const resApprove = await fetcher({
+        url: '/1001/transaction',
+        method: 'POST',
+        body: {
+          rawTx: rawTxApprove,
+        },
+        throwError: false,
+      })
+      console.log(resApprove)
+    }
+
     const sign = await KaikasService.signTypedData({
       from: userAddress || '',
       domain: {
         name: 'FireFlyExchange',
         version: '1',
-        chainId: 1001,
+        chainId: AppConfig.chainId,
         verifyingContract: AppConfig.fireflyExchange,
       },
       primaryType: 'Maker',
@@ -148,7 +186,90 @@ const SellModal = ({ nft, owner, quoteType }: { nft: any; owner: string | null; 
       console.log(e)
       return null
     })
-    console.log(sign)
+    if (sign) {
+      const resSell = await fetcher({
+        url: '/nft/sell',
+        method: 'POST',
+        body: {
+          chainId: AppConfig.chainId,
+          address: nft?.nftAddress,
+          id: nft?.nftId,
+          priceWei: ethers.parseUnits(price, 18).toString(),
+          sellerAddress: `${userAddress}`,
+          signatureSeller: sign,
+        },
+      })
+      console.log(resSell)
+      await mutate((key: any) => key?.includes('nfts'))
+      await closeAll()
+    }
+
+    setLoading(false)
+  }
+
+  const handleOffer = async () => {
+    setLoading(true)
+    const sign = await KaikasService.signTypedData({
+      from: userAddress || '',
+      domain: {
+        name: 'FireFlyExchange',
+        version: '1',
+        chainId: AppConfig.chainId,
+        verifyingContract: AppConfig.fireflyExchange,
+      },
+      primaryType: 'Maker',
+      types: {
+        Maker: [
+          { name: 'quoteType', type: 'uint8' },
+          { name: 'orderNonce', type: 'uint256' },
+          { name: 'collectionType', type: 'uint8' },
+          { name: 'collection', type: 'address' },
+          { name: 'tokenId', type: 'uint256' },
+          { name: 'currency', type: 'address' },
+          { name: 'price', type: 'uint256' },
+          { name: 'signer', type: 'address' },
+          { name: 'startTime', type: 'uint256' },
+          { name: 'endTime', type: 'uint256' },
+          { name: 'assets', type: 'address[]' },
+          { name: 'values', type: 'uint256[]' },
+        ],
+      },
+      message: {
+        quoteType,
+        orderNonce: '1',
+        collectionType: '1',
+        collection: nft?.nftAddress,
+        tokenId: nft?.nftId,
+        currency: ethers.ZeroAddress,
+        price: ethers.parseUnits(price, 18).toString(),
+        signer: owner,
+        startTime: 0,
+        endTime: ethers.MaxUint256.toString(),
+        // TODO:
+        assets: [AppConfig.rimAddress, AppConfig.brakeDiskAddress],
+        values: [1, 2],
+      },
+    }).catch((e) => {
+      console.log(e)
+      return null
+    })
+    if (sign) {
+      const resSell = await fetcher({
+        url: '/nft/offer',
+        method: 'POST',
+        body: {
+          chainId: AppConfig.chainId,
+          address: nft?.nftAddress,
+          id: nft?.nftId,
+          priceWei: ethers.parseUnits(price, 18).toString(),
+          buyerAddress: `${userAddress}`,
+          signatureBuyer: sign,
+        },
+      })
+      console.log(resSell)
+      await mutate((key: any) => key?.includes('nfts'))
+      await closeAll()
+    }
 
     setLoading(false)
   }
@@ -156,7 +277,9 @@ const SellModal = ({ nft, owner, quoteType }: { nft: any; owner: string | null; 
   return (
     <Container onClick={(e) => e.stopPropagation()}>
       <Header>
-        <HeaderTitle>Sell Car #{nft?.nftId}</HeaderTitle>
+        <HeaderTitle>
+          {quoteType === 0 ? 'Sell' : 'Offer'} Car #{nft?.nftId}
+        </HeaderTitle>
         <CloseButton onClick={() => closeModal()} src={closeIcon} alt='close' />
       </Header>
       <ImageContainer>
@@ -168,7 +291,7 @@ const SellModal = ({ nft, owner, quoteType }: { nft: any; owner: string | null; 
       <Input value={price} onChange={(e) => setPrice(e.target.value)} type='number' />
       <PrimaryButton
         disabled={price === '' || Number(price) <= 0}
-        onClick={() => handleSell()}
+        onClick={() => (quoteType === 0 ? handleSell() : handleOffer())}
         loading={loading}
         height='40px'
         width='70%'
@@ -180,4 +303,4 @@ const SellModal = ({ nft, owner, quoteType }: { nft: any; owner: string | null; 
   )
 }
 
-export default SellModal
+export default RequestModal

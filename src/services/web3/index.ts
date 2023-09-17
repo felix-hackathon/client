@@ -188,6 +188,12 @@ export default class Web3Service {
     }
   }
 
+  static async isApprovedForAll({ chainId, nftAddress, spenderAddress, userAddress }: { userAddress: string; nftAddress: string;spenderAddress: string; chainId: number }) {
+      const provider= await this.getProvider(chainId)
+      const contract = new Contract(nftAddress, carABI, provider)
+      return contract.isApprovedForAll(userAddress, spenderAddress)
+  }
+
   static async getNoncesNFT({ chainId, nftAddress, tokenId }: { tokenId: string; nftAddress: string; chainId: number }) {
     const provider = await this.getProvider(chainId)
     const contract = new Contract(nftAddress, carABI, provider)

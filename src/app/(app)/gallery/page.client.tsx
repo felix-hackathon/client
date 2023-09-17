@@ -1,7 +1,6 @@
 'use client'
-import NFTDetailModal from '@/components/NFTDetailModal'
+import NFT from '@/components/NFT'
 import AppConfig from '@/config'
-import useModal from '@/hooks/core/useModal'
 import useNFTs from '@/hooks/useNFTs'
 import { styled } from 'styled-components'
 
@@ -37,68 +36,13 @@ const ListContainer = styled.div`
   margin-top: 20px;
 `
 
-const NFTContainer = styled.div`
-  width: calc(100% / 4 - (20px * 3 / 4));
-  position: relative;
-  border-radius: 10px;
-  background-color: #fff;
-`
-
-const NFTImage = styled.img`
-  width: 100%;
-  border-radius: 10px;
-`
-
-const NFTName = styled.h3`
-  padding: 0px 10px;
-  font-weight: 400;
-  font-size: 14px;
-`
-
-const NFTId = styled.h4`
-  padding: 0px 10px 10px 10px;
-  font-weight: 400;
-  font-size: 12px;
-`
-
 const NoData = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
 `
 
-const ButtonContainer = styled.div`
-  width: 100%;
-  padding: 0px 20px 20px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`
-
-export const viewNFTInOpensea = (chainId: any, address: string, id: string) => {
-  const OPENSEA_CHAIN: { [k: string]: string } = {
-    1: 'ethereum',
-    5: 'goerli',
-    56: 'bsc',
-    97: 'bsc-testnet',
-    137: 'matic',
-    8217: 'klaytn',
-    1001: 'baobab',
-    80001: 'mumbai',
-    42161: 'arbitrum',
-    421613: 'arbitrum-goerli',
-    43114: 'avalanche',
-    43113: 'avalanche-fuji',
-  }
-  if ([5, 97, 80001, 43113, 1001, 421613].includes(parseInt(chainId))) {
-    return `https://testnets.opensea.io/assets/${OPENSEA_CHAIN[chainId]}/${address}/${id}`
-    return
-  }
-  return `https://opensea.io/assets/${OPENSEA_CHAIN[chainId]}/${address}/${id}`
-}
-
 const GalleryClient = () => {
-  const { openModal } = useModal()
   const { nfts } = useNFTs({
     chainId: AppConfig.chainId,
   })
@@ -107,27 +51,7 @@ const GalleryClient = () => {
     <Container>
       <Wrapper>
         <Title>Gallery</Title>
-        <ListContainer>
-          {nfts?.length === 0 ? (
-            <NoData>No Data</NoData>
-          ) : (
-            nfts?.map((nft: any) => (
-              <NFTContainer
-                onClick={() =>
-                  openModal({
-                    children: <NFTDetailModal nft={nft} />,
-                    id: 'nft-detail',
-                  })
-                }
-                key={nft?._id}
-              >
-                <NFTImage src={nft?.image} alt='nft' />
-                <NFTName>{nft?.name}</NFTName>
-                <NFTId>#{nft?.nftId}</NFTId>
-              </NFTContainer>
-            ))
-          )}
-        </ListContainer>
+        <ListContainer>{nfts?.length === 0 ? <NoData>No Data</NoData> : nfts?.map((nft: any) => <NFT nft={nft} key={nft._id} />)}</ListContainer>
       </Wrapper>
     </Container>
   )
