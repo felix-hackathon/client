@@ -7,8 +7,7 @@ import { useState } from 'react'
 import KaikasService from '@/services/kaikas'
 import useAuth from '@/hooks/core/useAuth'
 import { ethers } from 'ethers'
-import { sleep } from '@/common/functions'
-import Web3Service from '@/services/web3'
+import AppConfig from '@/config'
 
 const Container = styled.div`
   width: 380px;
@@ -87,81 +86,63 @@ const SellModal = ({ nft }: { nft: any }) => {
   const [price, setPrice] = useState('')
   const handleSell = async () => {
     setLoading(true)
-    const nonceNFT = await Web3Service.getNoncesNFT({
-      chainId: 1001,
-      nftAddress: nft?.nftAddress,
-      tokenId: nft?.nftId,
-    })
-    console.log('nonceNFT', nonceNFT)
-    const signNFT = await KaikasService.signTypedData({
-      from: userAddress || '',
-      domain: {
-        name: 'Car',
-        version: '1',
-        chainId: 1001,
-        verifyingContract: nft?.nftAddress,
-      },
-      types: {
-        Permit: [
-          {
-            name: 'spender',
-            type: 'address',
-          },
-          {
-            name: 'tokenId',
-            type: 'uint256',
-          },
-          {
-            name: 'nonce',
-            type: 'uint256',
-          },
-          {
-            name: 'deadline',
-            type: 'uint256',
-          },
-        ],
-      },
-      primaryType: 'Permit',
-      message: {
-        spender: '0xc95C0EC40937aD81F34c8b0836680b7681b7bF60',
-        tokenId: nft?.nftId,
-        nonce: `${nonceNFT}`,
-        deadline: ethers.MaxUint256.toString(),
-      },
-    })
-    await sleep(1000)
+
+    /**
+     * @notice Maker is the struct for a maker order.
+     * @param quoteType Quote type (i.e. 0 = BID, 1 = ASK)
+     * @param orderNonce Order nonce (it can be shared across bid/ask maker orders)
+     * @param collectionType Collection type (i.e. 0 = ERC721, 1 = ERC6551)
+     * @param collection Collection address
+     * @param tokenId TokenId
+     * @param currency Currency address (@dev address(0) = ETH)
+     * @param price Minimum price for maker ask, maximum price for maker bid
+     * @param signer Signer address
+     * @param startTime Start timestamp
+     * @param endTime End timestamp
+     * @param items Array of items
+     * @param values Array of values
+     * @param makerSignature makerSignature (required);
+     */
+
     const sign = await KaikasService.signTypedData({
       from: userAddress || '',
       domain: {
-        name: 'ExchangeNFT',
+        name: 'FireFlyExchange',
         version: '1',
-        chainId: 8217,
-        verifyingContract: '0xc95C0EC40937aD81F34c8b0836680b7681b7bF60',
+        chainId: 1001,
+        verifyingContract: AppConfig.fireflyExchange,
       },
-      primaryType: 'SellerOrder',
+      primaryType: 'Maker',
       types: {
-        SellerOrder: [
-          { name: 'signer', type: 'address' },
+        Maker: [
+          { name: 'quoteType', type: 'uint8' },
+          { name: 'orderNonce', type: 'uint256' },
+          { name: 'collectionType', type: 'uint8' },
           { name: 'collection', type: 'address' },
-          { name: 'price', type: 'uint256' },
           { name: 'tokenId', type: 'uint256' },
           { name: 'currency', type: 'address' },
-          { name: 'nonce', type: 'uint256' },
+          { name: 'price', type: 'uint256' },
+          { name: 'signer', type: 'address' },
           { name: 'startTime', type: 'uint256' },
           { name: 'endTime', type: 'uint256' },
-          { name: 'permit', type: 'bytes' },
+          { name: 'assets', type: 'address[]' },
+          { name: 'values', type: 'uint256[]' },
         ],
       },
       message: {
-        signer: userAddress,
+        quoteType: 0,
+        orderNonce: '1',
+        collectionType: '1',
         collection: nft?.nftAddress,
-        price: ethers.parseUnits(price, 18).toString(),
         tokenId: nft?.nftId,
         currency: ethers.ZeroAddress,
-        nonce: '1',
+        price: ethers.parseUnits(price, 18).toString(),
+        signer: userAddress,
         startTime: 0,
         endTime: ethers.MaxUint256.toString(),
-        permit: signNFT,
+        // TODO:
+        assets: [AppConfig.rimAddress, AppConfig.brakeDiskAddress],
+        values: [1, 2],
       },
     }).catch((e) => {
       console.log(e)
