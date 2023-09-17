@@ -7,6 +7,7 @@ import multicallABI from './multicallABI'
 import AppConfig from '@/config'
 import routerABI from './routerABI'
 import carABI from './carABI'
+import wrapABI from './wrapABI'
 
 export type MulticallOptions<TContracts extends ContractFunctionConfig[] = ContractFunctionConfig[]> = {
   chainId: number
@@ -188,16 +189,61 @@ export default class Web3Service {
     }
   }
 
-  static async isApprovedForAll({ chainId, nftAddress, spenderAddress, userAddress }: { userAddress: string; nftAddress: string;spenderAddress: string; chainId: number }) {
-      const provider= await this.getProvider(chainId)
-      const contract = new Contract(nftAddress, carABI, provider)
-      return contract.isApprovedForAll(userAddress, spenderAddress)
+  static async isApprovedForAll({
+    chainId,
+    nftAddress,
+    spenderAddress,
+    userAddress,
+  }: {
+    userAddress: string
+    nftAddress: string
+    spenderAddress: string
+    chainId: number
+  }) {
+    const provider = await this.getProvider(chainId)
+    const contract = new Contract(nftAddress, carABI, provider)
+    return contract.isApprovedForAll(userAddress, spenderAddress)
   }
 
   static async getNoncesNFT({ chainId, nftAddress, tokenId }: { tokenId: string; nftAddress: string; chainId: number }) {
     const provider = await this.getProvider(chainId)
     const contract = new Contract(nftAddress, carABI, provider)
     return contract.nonces(tokenId)
+  }
+
+  static async checkBalanceAndApproveWrap({
+    chainId,
+    userAddress,
+    spenderAddress,
+    amount,
+  }: {
+    chainId: number
+    amount: string
+    userAddress: string
+    spenderAddress: string
+  }) {
+    const data = await this.multicall({
+      chainId,
+      contracts: [
+        {
+          abi: wrapABI,
+          address: AppConfig.WKLAY,
+          functionName: 'balanceOf',
+          args: [userAddress as any],
+        },
+        {
+          abi: wrapABI,
+          address: AppConfig.WKLAY,
+          functionName: 'allowance',
+          args: [userAddress as any, spenderAddress as any],
+        },
+      ],
+    })
+
+    return {
+      balance: data?.[0]?.[0] ? `${data?.[0]?.[0]}` : '0',
+      allowance: data?.[1]?.[0] ? `${data?.[1]?.[0]}` : '0',
+    }
   }
 
   static async getBalances({ chainId, tokenAddresses, userAddress }: { userAddress: string; tokenAddresses: string[]; chainId: number }) {

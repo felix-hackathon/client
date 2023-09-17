@@ -12,6 +12,7 @@ import { fetcher } from '@/services/api'
 import { mutate } from 'swr'
 import Web3Service from '@/services/web3'
 import carABI from '@/services/web3/carABI'
+import wrapABI from '@/services/web3/wrapABI'
 
 const Container = styled.div`
   width: 380px;
@@ -209,6 +210,61 @@ const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | nul
 
   const handleOffer = async () => {
     setLoading(true)
+    const { allowance, balance } = await Web3Service.checkBalanceAndApproveWrap({
+      chainId: AppConfig.chainId,
+      amount: '1',
+      spenderAddress: AppConfig.fireflyExchange,
+      userAddress: userAddress || '',
+    })
+    console.log({ allowance, balance })
+    const priceWei = ethers.parseUnits(price, 18).toString()
+    if (BigInt(balance) < BigInt(priceWei)) {
+      const rawTxWrap = await KaikasService.signTransaction({
+        type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
+        to: AppConfig.WKLAY,
+        value: priceWei,
+        data: Web3Service.encodeAbi(wrapABI as any, 'deposit', []),
+        gas: '100000',
+        from: userAddress as string,
+      }).catch((e) => {
+        console.log(e)
+        return null
+      })
+
+      const resWrap = await fetcher({
+        url: '/1001/transaction',
+        method: 'POST',
+        body: {
+          rawTx: rawTxWrap,
+        },
+        throwError: false,
+      })
+      console.log('resWrap', resWrap)
+    }
+
+    if (BigInt(allowance) < BigInt(priceWei)) {
+      const rawTxApprove = await KaikasService.signTransaction({
+        type: 'FEE_DELEGATED_SMART_CONTRACT_EXECUTION',
+        to: AppConfig.WKLAY,
+        value: '0',
+        data: Web3Service.encodeAbi(wrapABI as any, 'approve', [AppConfig.fireflyExchange, priceWei]),
+        gas: '100000',
+        from: userAddress as string,
+      }).catch((e) => {
+        console.log(e)
+        return null
+      })
+
+      const resApprove = await fetcher({
+        url: '/1001/transaction',
+        method: 'POST',
+        body: {
+          rawTx: rawTxApprove,
+        },
+        throwError: false,
+      })
+      console.log('resApprove', resApprove)
+    }
     const sign = await KaikasService.signTypedData({
       from: userAddress || '',
       domain: {
@@ -236,7 +292,7 @@ const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | nul
       },
       message: {
         quoteType,
-        orderNonce: '1',
+        orderNonce: '0',
         collectionType: '1',
         collection: nft?.nftAddress,
         tokenId: nft?.nftId,
@@ -245,7 +301,6 @@ const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | nul
         signer: owner,
         startTime: 0,
         endTime: ethers.MaxUint256.toString(),
-        // TODO:
         assets: [AppConfig.rimAddress, AppConfig.brakeDiskAddress],
         values: [1, 2],
       },
@@ -278,7 +333,7 @@ const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | nul
     <Container onClick={(e) => e.stopPropagation()}>
       <Header>
         <HeaderTitle>
-          {quoteType === 0 ? 'Sell' : 'Offer'} Car #{nft?.nftId}
+          {quoteType === 1 ? 'Sell' : 'Offer'} Car #{nft?.nftId}
         </HeaderTitle>
         <CloseButton onClick={() => closeModal()} src={closeIcon} alt='close' />
       </Header>
@@ -291,13 +346,13 @@ const RequestModal = ({ nft, owner, quoteType }: { nft: any; owner: string | nul
       <Input value={price} onChange={(e) => setPrice(e.target.value)} type='number' />
       <PrimaryButton
         disabled={price === '' || Number(price) <= 0}
-        onClick={() => (quoteType === 0 ? handleSell() : handleOffer())}
+        onClick={() => (quoteType === 1 ? handleSell() : handleOffer())}
         loading={loading}
         height='40px'
         width='70%'
         className='MT20 MB10'
       >
-        {quoteType === 0 ? 'Sell' : 'Offer'}
+        {quoteType === 1 ? 'Sell' : 'Offer'}
       </PrimaryButton>
     </Container>
   )
