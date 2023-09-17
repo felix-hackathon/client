@@ -1,31 +1,135 @@
 const exchangeABI = [
   {
-    inputs: [
-      { internalType: 'string', name: 'name_', type: 'string' },
-      { internalType: 'contract IERC6551Registry', name: 'registry_', type: 'address' },
-      { internalType: 'address', name: 'implementation_', type: 'address' },
-    ],
+    inputs: [],
     stateMutability: 'nonpayable',
     type: 'constructor',
   },
-  { inputs: [], name: 'ErrorHandler__ExecutionFailed', type: 'error' },
-  { inputs: [], name: 'Exchange__InvalidAsset', type: 'error' },
-  { inputs: [], name: 'Exchange__InvalidCollection', type: 'error' },
-  { inputs: [], name: 'Exchange__InvalidCurrency', type: 'error' },
-  { inputs: [], name: 'Exchange__InvalidNonce', type: 'error' },
-  { inputs: [], name: 'Exchange__InvalidSigner', type: 'error' },
-  { inputs: [], name: 'Exchange__LengthMisMatch', type: 'error' },
-  { inputs: [], name: 'Exchange__OutOfRange', type: 'error' },
-  { inputs: [], name: 'Exchange__ZeroValue', type: 'error' },
-  { inputs: [], name: 'InvalidShortString', type: 'error' },
-  { inputs: [], name: 'NotReceivedERC721', type: 'error' },
-  { inputs: [{ internalType: 'string', name: 'str', type: 'string' }], name: 'StringTooLong', type: 'error' },
-  { anonymous: false, inputs: [], name: 'EIP712DomainChanged', type: 'event' },
+  {
+    inputs: [],
+    name: 'BaseUpgradeable__NotAuthorized',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ErrorHandler__ExecutionFailed',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'Exchange__InvalidAsset',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'Exchange__InvalidCollection',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'Exchange__InvalidCurrency',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'Exchange__InvalidNonce',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'Exchange__InvalidSigner',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'Exchange__LengthMisMatch',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'Exchange__OutOfRange',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'Exchange__ZeroValue',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NotReceivedERC721',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ReentrancyGuard__Locked',
+    type: 'error',
+  },
   {
     anonymous: false,
     inputs: [
-      { indexed: false, internalType: 'address', name: 'protocolRecipient', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'protocolFee', type: 'uint256' },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'previousAdmin',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'newAdmin',
+        type: 'address',
+      },
+    ],
+    name: 'AdminChanged',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'beacon',
+        type: 'address',
+      },
+    ],
+    name: 'BeaconUpgraded',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [],
+    name: 'EIP712DomainChanged',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint8',
+        name: 'version',
+        type: 'uint8',
+      },
+    ],
+    name: 'Initialized',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'protocolRecipient',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'protocolFee',
+        type: 'uint256',
+      },
     ],
     name: 'NewProtocolFee',
     type: 'event',
@@ -33,45 +137,116 @@ const exchangeABI = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
-      { indexed: true, internalType: 'bytes32', name: 'previousAdminRole', type: 'bytes32' },
-      { indexed: true, internalType: 'bytes32', name: 'newAdminRole', type: 'bytes32' },
+      {
+        indexed: false,
+        internalType: 'enum QuoteType',
+        name: 'quoteType',
+        type: 'uint8',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'orderNonce',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'enum CollectionType',
+        name: 'collectionType',
+        type: 'uint8',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'collection',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'tokenId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'currency',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'price',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'seller',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'recipient',
+        type: 'address',
+      },
     ],
-    name: 'RoleAdminChanged',
+    name: 'OrderExecuted',
     type: 'event',
   },
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
-      { indexed: true, internalType: 'address', name: 'account', type: 'address' },
-      { indexed: true, internalType: 'address', name: 'sender', type: 'address' },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'implementation',
+        type: 'address',
+      },
     ],
-    name: 'RoleGranted',
+    name: 'Upgraded',
     type: 'event',
   },
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
-      { indexed: true, internalType: 'address', name: 'account', type: 'address' },
-      { indexed: true, internalType: 'address', name: 'sender', type: 'address' },
-    ],
-    name: 'RoleRevoked',
-    type: 'event',
-  },
-  { inputs: [], name: 'DEFAULT_ADMIN_ROLE', outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }], stateMutability: 'view', type: 'function' },
   {
     inputs: [],
     name: 'eip712Domain',
     outputs: [
-      { internalType: 'bytes1', name: 'fields', type: 'bytes1' },
-      { internalType: 'string', name: 'name', type: 'string' },
-      { internalType: 'string', name: 'version', type: 'string' },
-      { internalType: 'uint256', name: 'chainId', type: 'uint256' },
-      { internalType: 'address', name: 'verifyingContract', type: 'address' },
-      { internalType: 'bytes32', name: 'salt', type: 'bytes32' },
-      { internalType: 'uint256[]', name: 'extensions', type: 'uint256[]' },
+      {
+        internalType: 'bytes1',
+        name: 'fields',
+        type: 'bytes1',
+      },
+      {
+        internalType: 'string',
+        name: 'name',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: 'version',
+        type: 'string',
+      },
+      {
+        internalType: 'uint256',
+        name: 'chainId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: 'verifyingContract',
+        type: 'address',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'salt',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint256[]',
+        name: 'extensions',
+        type: 'uint256[]',
+      },
     ],
     stateMutability: 'view',
     type: 'function',
@@ -80,19 +255,71 @@ const exchangeABI = [
     inputs: [
       {
         components: [
-          { internalType: 'enum QuoteType', name: 'quoteType', type: 'uint8' },
-          { internalType: 'uint256', name: 'orderNonce', type: 'uint256' },
-          { internalType: 'enum CollectionType', name: 'collectionType', type: 'uint8' },
-          { internalType: 'address', name: 'collection', type: 'address' },
-          { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
-          { internalType: 'address', name: 'currency', type: 'address' },
-          { internalType: 'uint256', name: 'price', type: 'uint256' },
-          { internalType: 'address', name: 'signer', type: 'address' },
-          { internalType: 'uint256', name: 'startTime', type: 'uint256' },
-          { internalType: 'uint256', name: 'endTime', type: 'uint256' },
-          { internalType: 'address[]', name: 'assets', type: 'address[]' },
-          { internalType: 'uint256[]', name: 'values', type: 'uint256[]' },
-          { internalType: 'bytes', name: 'makerSignature', type: 'bytes' },
+          {
+            internalType: 'enum QuoteType',
+            name: 'quoteType',
+            type: 'uint8',
+          },
+          {
+            internalType: 'uint256',
+            name: 'orderNonce',
+            type: 'uint256',
+          },
+          {
+            internalType: 'enum CollectionType',
+            name: 'collectionType',
+            type: 'uint8',
+          },
+          {
+            internalType: 'address',
+            name: 'collection',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256',
+            name: 'tokenId',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address',
+            name: 'currency',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256',
+            name: 'price',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address',
+            name: 'signer',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256',
+            name: 'startTime',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'endTime',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address[]',
+            name: 'assets',
+            type: 'address[]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'values',
+            type: 'uint256[]',
+          },
+          {
+            internalType: 'bytes',
+            name: 'makerSignature',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct OrderStructs.Maker',
         name: 'maker_',
@@ -100,8 +327,16 @@ const exchangeABI = [
       },
       {
         components: [
-          { internalType: 'address', name: 'recipient', type: 'address' },
-          { internalType: 'bytes', name: 'takerSignature', type: 'bytes' },
+          {
+            internalType: 'address',
+            name: 'recipient',
+            type: 'address',
+          },
+          {
+            internalType: 'bytes',
+            name: 'takerSignature',
+            type: 'bytes',
+          },
         ],
         internalType: 'struct OrderStructs.Taker',
         name: 'taker_',
@@ -114,66 +349,100 @@ const exchangeABI = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'bytes32', name: 'role', type: 'bytes32' }],
-    name: 'getRoleAdmin',
-    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [
-      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
-      { internalType: 'address', name: 'account', type: 'address' },
+      {
+        internalType: 'address',
+        name: 'roleManager_',
+        type: 'address',
+      },
+      {
+        internalType: 'string',
+        name: 'name_',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: 'version_',
+        type: 'string',
+      },
+      {
+        internalType: 'contract IERC6551Registry',
+        name: 'registry_',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'implementation_',
+        type: 'address',
+      },
     ],
-    name: 'grantRole',
+    name: 'initialize',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [
-      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
-      { internalType: 'address', name: 'account', type: 'address' },
-    ],
-    name: 'hasRole',
-    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'address', name: 'account', type: 'address' },
-      { internalType: 'uint256', name: 'nonce', type: 'uint256' },
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'nonce',
+        type: 'uint256',
+      },
     ],
     name: 'isNonceExecutedOrCancelled',
-    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'proxiableUUID',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'roleManager',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
-      { internalType: 'address', name: 'account', type: 'address' },
-    ],
-    name: 'renounceRole',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
-      { internalType: 'address', name: 'account', type: 'address' },
-    ],
-    name: 'revokeRole',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'contract IERC6551Registry', name: 'registry_', type: 'address' },
-      { internalType: 'address', name: 'implementation_', type: 'address' },
+      {
+        internalType: 'contract IERC6551Registry',
+        name: 'registry_',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'implementation_',
+        type: 'address',
+      },
     ],
     name: 'setRegistryInfo',
     outputs: [],
@@ -181,18 +450,63 @@ const exchangeABI = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'bytes4', name: 'interfaceId', type: 'bytes4' }],
-    name: 'supportsInterface',
-    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-    stateMutability: 'view',
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'roleManager_',
+        type: 'address',
+      },
+    ],
+    name: 'setRoleManager',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'newImplementation',
+        type: 'address',
+      },
+    ],
+    name: 'upgradeTo',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'newImplementation',
+        type: 'address',
+      },
+      {
+        internalType: 'bytes',
+        name: 'data',
+        type: 'bytes',
+      },
+    ],
+    name: 'upgradeToAndCall',
+    outputs: [],
+    stateMutability: 'payable',
     type: 'function',
   },
   {
     inputs: [],
     name: 'viewProtocolFeeInfo',
     outputs: [
-      { internalType: 'address', name: '', type: 'address' },
-      { internalType: 'uint256', name: '', type: 'uint256' },
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
     ],
     stateMutability: 'view',
     type: 'function',
