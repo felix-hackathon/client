@@ -95,7 +95,7 @@ const NFTDetailModal = ({ nft }: { nft: any }) => {
 
   const handleBuy = async () => {
     setLoading(true)
-    const quoteType = '0' //(0 = BID, 1 = ASK)
+    const quoteType = '1' //(0 = BID, 1 = ASK)
     const orderNonce = '1' // unique number
     const collectionType = '1' // (0 = 721, 1 = 6551)
     const collection = nft?.nftAddress
